@@ -914,98 +914,215 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
   </div>
 
   <!-- 12. CLIENT-SIDE SCRIPT LOGIC (Connected to Google Apps Script) -->
-  <script>
-    // New Google Apps Script Web App Endpoint provided
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxbaTTSum7Qdiv0P7vDriJfn8UjlOQc9_qOnlmHa450YQR3BQE6xYoHDoh6fIAIBLfc/exec";
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxbaTTSum7Qdiv0P7vDriJfn8UjlOQc9_qOnlmHa450YQR3BQE6xYoHDoh6fIAIBLfc/exec";
 
-    let currentOfferPacks = 1;
-    let currentTotal = 259;
-    let currentOfferText = "عرض العناية الفردي: 1 باك (6 قطع)";
+  let currentOfferPacks = 1;
+  let currentTotal = 259;
+  let currentOfferText = "عرض العناية الفردي: 1 باك (6 قطع)";
 
-    function updateSelectedOffer(packs, price, text) {
-      currentOfferPacks = packs;
-      currentTotal = price;
-      currentOfferText = text;
+  // Prevent duplicate submissions
+  let isSubmitting = false;
 
-      // Update Form displays
-      document.getElementById('displayTotal').innerText = price + ' درهم';
-      document.getElementById('stickyPriceDisplay').innerText = price + ' درهم';
+  function updateSelectedOffer(packs, price, text) {
+    currentOfferPacks = packs;
+    currentTotal = price;
+    currentOfferText = text;
+
+    document.getElementById('displayTotal').innerText = price + ' درهم';
+    document.getElementById('stickyPriceDisplay').innerText = price + ' درهم';
+  }
+
+  function normalizeMoroccanPhone(phone) {
+    let clean = String(phone || '').replace(/\D/g, '');
+
+    if (clean.startsWith('212')) {
+      return clean;
     }
 
-    async function handleOrderSubmit(event) {
-      event.preventDefault();
-      
-      const submitBtn = document.getElementById('submitBtn');
-      const originalBtnHtml = submitBtn.innerHTML;
+    if (clean.startsWith('0')) {
+      return '212' + clean.substring(1);
+    }
 
-      const fullName = document.getElementById('fullName').value.trim();
-      const phone = document.getElementById('phoneNumber').value.trim();
-      const city = document.getElementById('city').value.trim();
-      const address = document.getElementById('address').value.trim();
+    if (clean.length === 9) {
+      return '212' + clean;
+    }
 
-      if (!fullName || !phone || !city || !address) {
-        return;
+    return clean;
+  }
+
+  function showSuccessModal(fullName, phone, city, address) {
+    document.getElementById('modalName').innerText = fullName;
+    document.getElementById('modalPhone').innerText = phone;
+    document.getElementById('modalCity').innerText = city + ' - ' + address;
+    document.getElementById('modalOffer').innerText = currentOfferText;
+    document.getElementById('modalPrice').innerText =
+      currentTotal + ' درهم (توصيل فابور)';
+
+    const message = encodeURIComponent(
+      `السلام عليكم، بغيت نأكد طلبي ديال باك العناية بالقدمين iPONCE:\n` +
+      `- الاسم: ${fullName}\n` +
+      `- الهاتف: ${phone}\n` +
+      `- المدينة والعنوان: ${city} - ${address}\n` +
+      `- العرض: ${currentOfferText}\n` +
+      `- المبلغ الإجمالي: ${currentTotal} درهم (توصيل مجاني)`
+    );
+
+    document.getElementById('whatsappConfirmLink').href =
+      `https://wa.me/212650054422?text=${message}`;
+
+    document.getElementById('successModal').classList.remove('hidden');
+  }
+
+  function showOrderError() {
+    alert(
+      "سمحي لينا، وقع مشكل أثناء تسجيل الطلب. عافاك عاودي المحاولة، وإذا بقى المشكل تواصلي معنا عبر WhatsApp."
+    );
+  }
+
+  async function handleOrderSubmit(event) {
+    event.preventDefault();
+
+    // Prevent double-click / duplicate order
+    if (isSubmitting) {
+      return;
+    }
+
+    const form = document.getElementById('codOrderForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    const originalBtnHtml = submitBtn.innerHTML;
+
+    const fullName = document.getElementById('fullName').value.trim();
+    const phone = document.getElementById('phoneNumber').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const address = document.getElementById('address').value.trim();
+
+    // Browser validation
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    if (!fullName || !phone || !city || !address) {
+      return;
+    }
+
+    // Basic Moroccan phone validation
+    const cleanPhone = phone.replace(/\D/g, '');
+
+    if (
+      !/^0[5-7]\d{8}$/.test(cleanPhone) &&
+      !/^212[5-7]\d{8}$/.test(cleanPhone) &&
+      !/^[5-7]\d{8}$/.test(cleanPhone)
+    ) {
+      alert("عافاك دخلي رقم هاتف مغربي صحيح (06 / 07 / 05).");
+      return;
+    }
+
+    isSubmitting = true;
+    submitBtn.disabled = true;
+
+    submitBtn.classList.remove('animate-pulse-cta');
+    submitBtn.innerHTML = `
+      <i class="fa-solid fa-spinner fa-spin text-xl text-amber-300"></i>
+      <span>جاري تسجيل طلبك...</span>
+    `;
+
+    const formData = new FormData();
+
+    formData.append('name', fullName);
+    formData.append('phone', phone);
+    formData.append('city', city);
+    formData.append('address', address);
+    formData.append('offer', currentOfferText);
+    formData.append('price', String(currentTotal));
+
+    try {
+
+      /*
+       * Google Apps Script is cross-origin.
+       * no-cors allows the POST request to be sent.
+       * The browser cannot read the response body/status.
+       */
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: formData,
+        mode: 'no-cors',
+        cache: 'no-store'
+      });
+
+      /*
+       * IMPORTANT:
+       * Purchase is NOT fired on button click anymore.
+       *
+       * It is fired only after the order submission request
+       * has completed from the browser side.
+       */
+      if (typeof fbq === 'function') {
+        fbq(
+          'track',
+          'Purchase',
+          {
+            value: Number(currentTotal),
+            currency: 'MAD',
+            content_name: currentOfferText,
+            content_type: 'product',
+            contents: [
+              {
+                id: 'IPONCE-FOOTCARE',
+                quantity: Number(currentOfferPacks)
+              }
+            ]
+          }
+        );
       }
 
-      // Visual feedback on button (loading state)
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-xl text-amber-300"></i> <span>جاري تسجيل وتأكيد طلبك...</span>`;
+      // Show successful order confirmation
+      showSuccessModal(
+        fullName,
+        phone,
+        city,
+        address
+      );
 
-      // Prepare Form Data for Google Apps Script
-      const formData = new FormData();
-      formData.append('name', fullName);
-      formData.append('phone', phone);
-      formData.append('city', city);
-      formData.append('address', address);
-      formData.append('offer', currentOfferText);
-      formData.append('price', currentTotal.toString());
+    } catch (error) {
 
-      try {
-        // Send directly to Google Apps Script Web App (no-cors mode)
-        await fetch(SCRIPT_URL, {
-          method: 'POST',
-          body: formData,
-          mode: 'no-cors'
-        });
+      console.error(
+        'iPONCE order submission error:',
+        error
+      );
 
-        // Populate Modal Details
-        document.getElementById('modalName').innerText = fullName;
-        document.getElementById('modalPhone').innerText = phone;
-        document.getElementById('modalCity').innerText = city + ' - ' + address;
-        document.getElementById('modalOffer').innerText = currentOfferText;
-        document.getElementById('modalPrice').innerText = currentTotal + ' درهم (توصيل فابور)';
+      /*
+       * IMPORTANT:
+       * We DO NOT fire Purchase here.
+       * We DO NOT show "success" modal here.
+       */
+      showOrderError();
 
-        // Prepare WhatsApp confirmation link for customer
-        const message = encodeURIComponent(`السلام عليكم، بغيت نأكد طلبي ديال باك العناية بالقدمين iPONCE:\n- الاسم: ${fullName}\n- الهاتف: ${phone}\n- المدينة والعنوان: ${city} - ${address}\n- العرض: ${currentOfferText}\n- المبلغ الإجمالي: ${currentTotal} درهم (توصيل مجاني)`);
-        document.getElementById('whatsappConfirmLink').href = `https://wa.me/212650054422?text=${message}`;
+    } finally {
 
-        // Show Modal
-        const modal = document.getElementById('successModal');
-        modal.classList.remove('hidden');
+      isSubmitting = false;
 
-      } catch (error) {
-        console.error('Error submitting order:', error);
-        // Fallback: Still show modal as data may have gone through in background
-        document.getElementById('modalName').innerText = fullName;
-        document.getElementById('modalPhone').innerText = phone;
-        document.getElementById('modalCity').innerText = city;
-        document.getElementById('modalOffer').innerText = currentOfferText;
-        document.getElementById('modalPrice').innerText = currentTotal + ' درهم';
-        
-        const modal = document.getElementById('successModal');
-        modal.classList.remove('hidden');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalBtnHtml;
-      }
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalBtnHtml;
+      submitBtn.classList.add('animate-pulse-cta');
     }
+  }
 
-    function closeSuccessModal() {
-      const modal = document.getElementById('successModal');
-      modal.classList.add('hidden');
-      document.getElementById('codOrderForm').reset();
-      updateSelectedOffer(1, 259, "عرض العناية الفردي: 1 باك (6 قطع)");
-    }
-  </script>
+  function closeSuccessModal() {
+    const modal = document.getElementById('successModal');
+
+    modal.classList.add('hidden');
+
+    document.getElementById('codOrderForm').reset();
+
+    updateSelectedOffer(
+      1,
+      259,
+      "عرض العناية الفردي: 1 باك (6 قطع)"
+    );
+  }
+</script>
 </body>
 </html>
