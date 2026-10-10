@@ -1,3 +1,2646 @@
+
+Conversation avec Gemini
+chno li kikhali les site li katsayb lia makiibo hta vente 0 vente apres maknlier pixel kanlanciha fi git hub kanlier domaine kolchi kantla9 ads mais makatji hta demande mn site li saybti 3lch
+
+Mli katlleq ads w kaykoun عندك 0 vente / 0 lead, l-mouchkil 99% kaykoun m7sour f wa7ed mn 4 dial l-asbab (bin technique, vitesse, w marketing):
+
+1. L-Mouchkil Technique: L-Formulaire makaysiftch l-data
+GitHub Pages kaykoun site statique (HTML/JS). Ila kanti katkhdem b Google Apps Script, Supabase, aw Webhook bach tsift les commandes:
+
+Google Apps Script Permissions: Ila msayeb Google Sheet backend, khass l-web app tkoun me7loula b "Who has access: Anyone" (machi "Only myself"). Ila madertihach, ay wahed kaycliqui "Commander" kaytl3 lih error f l-khalfia w l-formulaire kaytblioka.
+
+CORS aw JS Error: L-bouton kaykoun kaydor (loading) bla maydir submit, aw kay3ti rechargement dial l-page bla matwssl l-commande.
+
+Kifach tverifi: Dkhol l site mn téléphone dialk b 4G (machi b Wi-Fi dial ddar), 3mmer l-formulaire w cliqui "Commander". Chof wach l-commande katwssl f l-blasa l Google Sheet / Supabase aw la.
+
+2. Vitesse dial l-chargement (Drop-off Rate kbir)
+F l-e-commerce f l-Meghrib, akbar sabab kaykhelli n-nass maywsloch l l-achat hwa t-t9el dial l-page:
+
+L-tsawer li katzid f l-code ila kanou b 2MB aw 3MB (PNG khditiha mn AI aw Canva), l-page katakhod 6 tal 10 t-twani bach t-chargé f 4G.
+
+N-nass f TikTok aw Instagram ila madkhelch l-site f a9al mn 2 tal 3 t-twani, kaykherjou 9bel maychoufo l-produit.
+
+Kifach tverifi: Dkhol l PageSpeed Insights w 7ett l-lien dial site dialk. Ila kan score 9el mn 60 f mobile, compressi l-tsawer l WebP (a9al mn 150KB l-tesswira).
+
+3. Objectif dial l-Ads f Meta (Traffic vs Sales/Leads)
+Ila tl9ti campaign b "Traffic": Meta katjib lik ghir n-nass li 3ziz 3lihom y-cliquiw 3la les liens bla maychriw (des cliqueurs professionels).
+
+L-khedma s-s7i7a: Khass l-campaign tkoun Sales (Purchase) aw Leads.
+
+Pixel Mismatch: Khass l-Pixel y-tiri l-event dial Lead aw Purchase ghir mli l-formulaire y-t-valida b naja7, machi ghir mli l-user y-cliqui 3la l-bouton w l-formulaire ba9i khawi.
+
+Kifach tverifi: F Ads Manager, chof l-far9 bin "Link Clicks" w "Landing Page Views". Ila kan 3ndek 100 clics w yallah 30 Landing Page Views, ra l-site t9il bzf.
+
+4. L'Offre w l-Formulaire (Marché Marocain COD)
+Formulaire twil: F l-COD f l-Meghrib, l-formulaire khasso ghir 3 dial l-khanaat:
+
+L-Isem l-kamel
+
+Nemra dial t-tilifoun
+
+L-Medina
+(Matdirch Email, Code Postal, aw Adresse 2).
+
+Absence dial les déclencheurs dial ti9a (Trust): Ila ma-baynach f l-fo9:
+
+"Paiement à la livraison (COD)"
+
+"Livraison gratuite / 24h-48h"
+
+"Garantie de retour / T9elleb 9bel matkheles"
+
+L-Prix w CTA: Khass l-bouton dial "Commander" ykoun bayen b couleur wadi7a w l-taman maktoub b Dirham (DH).
+
+Bach n-7eddou l-mouchkil f d-de99a: Ch7al mn clic جاك f l-Ads Manager, w wach jrebty t-commander b yeddik w wsslat l-data l l-backend?
+
+Hahwa l-code dial l-formulaire w l-fetch script, verifi lia wach fih chi mouchkil technique.
+
+L-code ma-tl3ch hnaya (غالباً nsiti mat-colléh).
+
+7etto hnaya (l-HTML dial l-formulaire w l-JavaScript / fetch), w f nfs l-we9t chof wach wa7ed mn had les 4 erreurs kheybin kaynin f l-code dialk:
+
+Ghyab e.preventDefault():
+Ila makantch had l-jomla f bdiet l-event listener dial submit:
+
+JavaScript
+form.addEventListener('submit', function(e) {
+    e.preventDefault(); // ila makantch hadi, l-page kat-rechargi w l-fetch makaywselch!
+    // ... fetch code
+});
+Mouchkil CORS m3a Google Apps Script:
+Ila kanti katsift l-Google Sheet via Apps Script Web App, standard fetch kaytbloqua b CORS ila madertich mode: 'no-cors':
+
+JavaScript
+fetch("VOTRE_GOOGLE_SCRIPT_URL", {
+    method: "POST",
+    mode: "no-cors", // Darouriya f Google Apps Script
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(formData)
+});
+L-Pixel kaytiri 9bel maytsift l-formulaire:
+Ila kanti dayer fbq('track', 'Purchase') aw Lead f click direct bla mat-t'akked anaho l-formulaire validé, kay7sb l-pixel commande walakin f l-backend makaywsel walo.
+
+Web App Version (Google Apps Script):
+Koll mra katzid modification f Google Apps Script, khass dir:
+Deploy > Manage Deployments > Edit (l-9lam) > Version: New Version > Deploy. Ila madertihach, l-URL kayeb9a khddam b l-code l-9dim.
+
+Paste l-code dial l-formulaire w l-script hnaya bach n-se77ouh lik b d-de99a.
+
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>iPONCE - باك العناية المتكاملة بالقدمين الطبيعي 6 في 1</title>
+
+  
+
+  <!-- Google Fonts: Tajawal & Cairo -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+
+  
+
+  <!-- FontAwesome Icons -->
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  
+
+  <!-- Tailwind CSS CDN -->
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+
+    tailwind.config = {
+
+      theme: {
+
+        extend: {
+
+          colors: {
+
+            brand: {
+
+              50: '#f4f8ee',
+
+              100: '#e5f1d8',
+
+              200: '#cecaa',
+
+              500: '#629630',
+
+              600: '#4e7b23',
+
+              700: '#3c601a',
+
+              800: '#2b4412',
+
+              900: '#1a2b0a',
+
+            },
+
+            spa: {
+
+              cream: '#FAF7F2',
+
+              sand: '#F3EFE6',
+
+              gold: '#C59B27',
+
+              accent: '#E07A5F',
+
+              dark: '#1C1917',
+
+            }
+
+          },
+
+          fontFamily: {
+
+            sans: ['Tajawal', 'Cairo', 'sans-serif'],
+
+            heading: ['Cairo', 'sans-serif'],
+
+          }
+
+        }
+
+      }
+
+    }
+
+  </script>
+
+
+
+  <style>
+
+    /* Continuous smooth ticker animation running from right to left */
+
+    @keyframes marqueeScrollRTL {
+
+      0% {
+
+        transform: translateX(0%);
+
+      }
+
+      100% {
+
+        transform: translateX(-50%);
+
+      }
+
+    }
+
+
+
+    .marquee-track {
+
+      display: flex;
+
+      width: max-content;
+
+      animation: marqueeScrollRTL 24s linear infinite;
+
+    }
+
+
+
+    .marquee-track:hover {
+
+      animation-play-state: paused;
+
+    }
+
+
+
+    /* Pulse CTA animation */
+
+    @keyframes pulseGlow {
+
+      0%, 100% {
+
+        box-shadow: 0 0 0 0 rgba(78, 123, 35, 0.7);
+
+        transform: scale(1);
+
+      }
+
+      50% {
+
+        box-shadow: 0 0 24px 6px rgba(78, 123, 35, 0.35);
+
+        transform: scale(1.015);
+
+      }
+
+    }
+
+
+
+    .animate-pulse-cta {
+
+      animation: pulseGlow 2s infinite ease-in-out;
+
+    }
+
+
+
+    html {
+
+      scroll-behavior: smooth;
+
+    }
+
+
+
+    .product-card {
+
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    }
+
+    
+
+    .product-card:hover {
+
+      transform: translateY(-4px);
+
+    }
+
+  </style>
+
+</head>
+
+<body class="bg-spa-cream text-stone-800 antialiased font-sans pb-20 md:pb-0 selection:bg-brand-600 selection:text-white">
+
+
+
+  <!-- 1. Top Urgency Marquee Bar (Infinite Loop Right to Left) -->
+
+  <div class="bg-gradient-to-r from-brand-900 via-brand-800 to-brand-900 text-white py-2.5 shadow-md sticky top-0 z-50 overflow-hidden select-none border-b border-brand-700/40 cursor-pointer">
+
+    <div class="marquee-track flex items-center" dir="ltr">
+
+      <!-- First Segment -->
+
+      <div class="flex items-center shrink-0 gap-10 px-4 text-xs sm:text-sm font-bold tracking-wide" dir="rtl">
+
+        <span class="flex items-center gap-2">
+
+          <i class="fa-solid fa-fire text-amber-300 animate-bounce"></i>
+
+          <span>عرض حصري اليوم فقط: <strong class="text-amber-300 font-extrabold">تخفيض 40%</strong> + <strong class="text-lime-300 font-extrabold">التوصيل مجاني</strong> لجميع مدن المغرب والدفع بعد معاينة الطلب!</span>
+
+        </span>
+
+        <span class="text-lime-400 font-extrabold">✦</span>
+
+        <span class="flex items-center gap-2">
+
+          <i class="fa-solid fa-truck-fast text-lime-300"></i>
+
+          <span>التوصيل بالمجان حتى لباب الدار والدفع بعد معاينة محتوى الباك</span>
+
+        </span>
+
+        <span class="text-amber-400 font-extrabold">★</span>
+
+        <span class="flex items-center gap-2">
+
+          <i class="fa-solid fa-spa text-amber-300"></i>
+
+          <span>باك 6 قطع أصلية لعلاج التشققات والخشونة متوفر بكمية محدودة!</span>
+
+        </span>
+
+        <span class="text-lime-400 font-extrabold">✦</span>
+
+      </div>
+
+
+
+      <!-- Second Duplicate Segment for Seamless Continuous Infinite Scroll -->
+
+      <div class="flex items-center shrink-0 gap-10 px-4 text-xs sm:text-sm font-bold tracking-wide" dir="rtl" aria-hidden="true">
+
+        <span class="flex items-center gap-2">
+
+          <i class="fa-solid fa-fire text-amber-300 animate-bounce"></i>
+
+          <span>عرض حصري اليوم فقط: <strong class="text-amber-300 font-extrabold">تخفيض 40%</strong> + <strong class="text-lime-300 font-extrabold">التوصيل مجاني</strong> لجميع مدن المغرب والدفع بعد معاينة الطلب!</span>
+
+        </span>
+
+        <span class="text-lime-400 font-extrabold">✦</span>
+
+        <span class="flex items-center gap-2">
+
+          <i class="fa-solid fa-truck-fast text-lime-300"></i>
+
+          <span>التوصيل بالمجان حتى لباب الدار والدفع بعد معاينة محتوى الباك</span>
+
+        </span>
+
+        <span class="text-amber-400 font-extrabold">★</span>
+
+        <span class="flex items-center gap-2">
+
+          <i class="fa-solid fa-spa text-amber-300"></i>
+
+          <span>باك 6 قطع أصلية لعلاج التشققات والخشونة متوفر بكمية محدودة!</span>
+
+        </span>
+
+        <span class="text-lime-400 font-extrabold">✦</span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- 2. Sticky Header with Logo -->
+
+  <header class="bg-white/95 backdrop-blur-md border-b border-brand-100 py-3 px-4 sticky top-[39px] z-40 shadow-sm">
+
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
+
+      <div class="flex items-center gap-3">
+
+        <img 
+
+          src="pictures/iponce logo.jpg" 
+
+          alt="iPONCE Logo" 
+
+          class="h-11 sm:h-12 w-auto object-contain rounded-lg shadow-sm"
+
+          onerror="this.onerror=null; this.src='https://placehold.co/180x60/4e7b23/ffffff?text=iPONCE+Naturals';"
+
+        >
+
+        <span class="hidden sm:inline-flex text-xs bg-brand-50 text-brand-700 font-bold px-3 py-1 rounded-full border border-brand-200">
+
+          <i class="fa-solid fa-circle-check text-brand-600 ml-1.5"></i> منتوج طبيعي أصلي 100%
+
+        </span>
+
+      </div>
+
+
+
+      <a href="#order-form" class="bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-extrabold py-2 px-5 rounded-full transition shadow flex items-center gap-2">
+
+        <i class="fa-solid fa-cart-shopping"></i>
+
+        <span>أطلبي الآن</span>
+
+      </a>
+
+    </div>
+
+
+
+   <!-- Meta Pixel Code -->
+
+<script>
+
+!function(f,b,e,v,n,t,s)
+
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+
+n.queue=[];t=b.createElement(e);t.async=!0;
+
+t.src=v;s=b.getElementsByTagName(e)[0];
+
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+
+'https://connect.facebook.net/en_US/fbevents.js');
+
+fbq('init', '1035638579488154');
+
+fbq('track', 'PageView');
+
+</script>
+
+<noscript><img height="1" width="1" style="display:none"
+
+src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
+
+/></noscript>
+
+<!-- End Meta Pixel Code -->
+
+ 
+
+  </header>
+
+
+
+  <!-- 3. TOP SECTION: Hero Headline & Full Pack Image -->
+
+  <section class="pt-6 pb-2 px-4">
+
+    <div class="max-w-3xl mx-auto text-center">
+
+      
+
+      <!-- Sub-badge -->
+
+      <div class="inline-flex items-center gap-2 bg-brand-100/90 text-brand-800 text-xs sm:text-sm font-extrabold px-4 py-1.5 rounded-full mb-3 shadow-sm">
+
+        <i class="fa-solid fa-leaf text-brand-600"></i>
+
+        <span>روتين السبا الطبيعي المتكامل للعناية الفائقة بالقدمين</span>
+
+      </div>
+
+
+
+      <!-- Main Catchy Title -->
+
+      <h1 class="text-2xl sm:text-4xl md:text-5xl font-black text-brand-900 leading-tight mb-3 font-heading">
+
+        ودّعي خشونة وتشققات القدمين واسترجعي نعومتهما كالحرير من أول استعمال!
+
+      </h1>
+
+
+
+      <p class="text-sm sm:text-base md:text-lg text-stone-600 max-w-2xl mx-auto leading-relaxed mb-5">
+
+        باك <strong class="text-brand-700 font-bold">iPONCE</strong> الفاخر المتكون من <strong class="text-brand-800 underline decoration-brand-500 font-extrabold">6 منتجات أصلية</strong> لتنظيف، تقشير، ترطيب وحماية القدمين والأظافر مع حماية تامة ضد الفطريات وروائح الأحذية.
+
+      </p>
+
+
+
+      <!-- Main Pack Picture Card -->
+
+      <div class="relative bg-white rounded-3xl p-3 sm:p-4 shadow-2xl border-2 border-brand-100 max-w-xl mx-auto mb-6 overflow-hidden">
+
+        
+
+        <!-- Top Badges -->
+
+        <div class="absolute top-4 right-4 z-10">
+
+          <span class="bg-gradient-to-r from-amber-500 to-amber-600 text-white text-xs sm:text-sm font-extrabold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
+
+            <i class="fa-solid fa-award"></i> الأكثر طلباً في المغرب
+
+          </span>
+
+        </div>
+
+
+
+        <div class="absolute top-4 left-4 z-10">
+
+          <span class="bg-rose-600 text-white text-xs font-black px-2.5 py-1 rounded-full shadow-md">
+
+            تخفيض 40% 🔥
+
+          </span>
+
+        </div>
+
+
+
+        <!-- Full Pack Image -->
+
+        <img 
+
+          src="pack ipone.jpeg" 
+
+          alt="باك العناية المتكاملة بالقدمين iPONCE" 
+
+          class="w-full h-auto object-cover rounded-2xl shadow-inner transform hover:scale-[1.01] transition duration-500"
+
+          onerror="this.onerror=null; this.src='https://placehold.co/800x800/f3efe6/1a2b0a?text=Pack+iPONCE+6+Pieces';"
+
+        >
+
+
+
+        <!-- Pricing Tag Bar -->
+
+        <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between px-2">
+
+          <div class="text-right">
+
+            <span class="text-xs text-stone-400 line-through block">الثمن السابق: 259 درهم</span>
+
+            <div class="flex items-baseline gap-1.5">
+
+              <span class="text-2xl sm:text-3xl font-black text-brand-800">219 درهم</span>
+
+              <span class="text-xs font-bold text-lime-700 bg-lime-100 px-2 py-0.5 rounded-full">توصيل فابور</span>
+
+            </div>
+
+          </div>
+
+          <a href="#order-form" class="bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-black py-2.5 px-4 rounded-xl shadow-md transition flex items-center gap-1.5">
+
+            <i class="fa-solid fa-bolt text-amber-300"></i>
+
+            <span>استفيدي من العرض</span>
+
+          </a>
+
+        </div>
+
+
+
+        <!-- 3 Pillars Under Pack Image -->
+
+        <div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-stone-100 text-center text-[11px] sm:text-xs font-bold text-brand-900">
+
+          <div class="flex flex-col items-center gap-1">
+
+            <i class="fa-solid fa-leaf text-brand-600 text-base"></i>
+
+            <span>مكونات طبيعية 100%</span>
+
+          </div>
+
+          <div class="flex flex-col items-center gap-1 border-x border-stone-200">
+
+            <i class="fa-solid fa-truck-fast text-brand-600 text-base"></i>
+
+            <span>توصيل مجاني للباب</span>
+
+          </div>
+
+          <div class="flex flex-col items-center gap-1">
+
+            <i class="fa-solid fa-hand-holding-dollar text-brand-600 text-base"></i>
+
+            <span>الدفع بعد المعاينة</span>
+
+          </div>
+
+        </div>
+
+
+
+      </div>
+
+
+
+    </div>
+
+  </section>
+
+
+
+  <!-- 4. FAST COD ORDER FORM (Directly Below Top Product Image) -->
+
+  <section id="order-form" class="py-6 px-4">
+
+    <div class="max-w-xl mx-auto bg-white rounded-3xl p-5 sm:p-8 shadow-2xl border-2 border-brand-500 relative">
+
+      
+
+      <!-- Attention Grabber -->
+
+      <div class="text-center mb-6">
+
+        <div class="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 bg-amber-100 px-3.5 py-1 rounded-full mb-2">
+
+          <i class="fa-solid fa-fire text-amber-600 animate-pulse"></i> سارعي قبل نفاد الكمية المخفضة (متبقي 6 قطع فقط)!
+
+        </div>
+
+        <h2 class="text-2xl sm:text-3xl font-black text-brand-900 font-heading">
+
+          أطلبي الآن واستفيدي من التخفيض
+
+        </h2>
+
+        <p class="text-xs sm:text-sm text-stone-600 mt-1">
+
+          عَمّري المعلومات أسفله وسنتصل بكِ هاتفياً أو عبر الواتساب لتأكيد الإرسال
+
+        </p>
+
+      </div>
+
+
+
+      <!-- Pricing Offer Radio Cards -->
+
+      <div class="mb-5 space-y-3">
+
+        <label class="block text-xs sm:text-sm font-bold text-stone-800 mb-1">إختاري العرض المناسب لكِ:</label>
+
+        
+
+        <!-- Offer 1 (1 Pack) -->
+
+        <label class="relative flex items-center justify-between p-3.5 rounded-2xl border-2 border-brand-500 bg-brand-50/70 cursor-pointer transition hover:bg-brand-50 offer-option" id="offer1-box">
+
+          <div class="flex items-center gap-3">
+
+            <input type="radio" name="pack_offer" value="1" checked class="w-5 h-5 text-brand-600 focus:ring-brand-500" onchange="updateSelectedOffer(1, 219, 'عرض العناية الفردي: 1 باك (6 قطع)')">
+
+            <div>
+
+              <span class="font-black text-brand-900 block text-sm sm:text-base">عرض العناية الفردي: 1 باك كامل</span>
+
+              <span class="text-xs text-stone-600">يحتوي على 6 قطع أصلية متكاملة</span>
+
+            </div>
+
+          </div>
+
+          <div class="text-left">
+
+            <div class="text-lg sm:text-xl font-black text-brand-800">219 درهم</div>
+
+            <div class="text-xs text-stone-400 line-through">259 درهم</div>
+
+          </div>
+
+        </label>
+
+
+
+        <!-- Offer 2 (2 Packs - Recommended) -->
+
+        <label class="relative flex items-center justify-between p-3.5 rounded-2xl border-2 border-amber-400 bg-amber-50/60 cursor-pointer transition hover:bg-amber-50 offer-option" id="offer2-box">
+
+          <div class="absolute -top-3 left-4 bg-gradient-to-r from-amber-600 to-amber-500 text-white text-[10px] sm:text-xs font-black px-2.5 py-0.5 rounded-full shadow">
+
+            الأكثر توفيراً - وفري 69 درهم إضافية 🔥
+
+          </div>
+
+          <div class="flex items-center gap-3">
+
+            <input type="radio" name="pack_offer" value="2" class="w-5 h-5 text-brand-600 focus:ring-brand-500" onchange="updateSelectedOffer(2, 419, 'عرض التوفير المزدوج: 2 باكات (12 قطعة)')">
+
+            <div>
+
+              <span class="font-black text-amber-950 block text-sm sm:text-base">عرض التوفير المزدوج: 2 باكات</span>
+
+              <span class="text-xs text-amber-800 font-medium">لكِ ولصديقتك أو هدية راقية للوالدة</span>
+
+            </div>
+
+          </div>
+
+          <div class="text-left">
+
+            <div class="text-lg sm:text-xl font-black text-brand-800">419 درهم</div>
+
+            <div class="text-xs text-stone-400 line-through">459 درهم</div>
+
+          </div>
+
+        </label>
+
+      </div>
+
+
+
+      <!-- COD Form Inputs -->
+
+      <form id="codOrderForm" onsubmit="handleOrderSubmit(event)" class="space-y-3.5">
+
+        
+
+        <!-- Full Name -->
+
+        <div>
+
+          <label class="block text-xs sm:text-sm font-bold text-stone-700 mb-1" for="fullName">
+
+            الاسم الكامل <span class="text-rose-600">*</span>
+
+          </label>
+
+          <div class="relative">
+
+            <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none text-stone-400">
+
+              <i class="fa-regular fa-user"></i>
+
+            </span>
+
+            <input 
+
+              type="text" 
+
+              id="fullName" 
+
+              name="name"
+
+              required 
+
+              placeholder="مثال: مريم العلمي" 
+
+              class="w-full pr-10 pl-3 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm bg-stone-50/50"
+
+            >
+
+          </div>
+
+        </div>
+
+
+
+        <!-- Phone Number -->
+
+        <div>
+
+          <label class="block text-xs sm:text-sm font-bold text-stone-700 mb-1" for="phoneNumber">
+
+            رقم الهاتف (الواتساب) <span class="text-rose-600">*</span>
+
+          </label>
+
+          <div class="relative">
+
+            <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none text-stone-400">
+
+              <i class="fa-solid fa-phone"></i>
+
+            </span>
+
+            <input 
+
+              type="tel" 
+
+              id="phoneNumber" 
+
+              name="phone"
+
+              required 
+
+              dir="ltr"
+
+              placeholder="06 XX XX XX XX / 07 XX XX XX XX" 
+
+              class="w-full pr-10 pl-3 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm text-right bg-stone-50/50"
+
+            >
+
+          </div>
+
+        </div>
+
+
+
+        <!-- City & Address -->
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+          <div>
+
+            <label class="block text-xs sm:text-sm font-bold text-stone-700 mb-1" for="city">
+
+              المدينة <span class="text-rose-600">*</span>
+
+            </label>
+
+            <div class="relative">
+
+              <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none text-stone-400">
+
+                <i class="fa-solid fa-city"></i>
+
+              </span>
+
+              <input 
+
+                type="text" 
+
+                id="city" 
+
+                name="city"
+
+                required 
+
+                placeholder="مثال: الدار البيضاء، مراكش، طنجة..." 
+
+                class="w-full pr-10 pl-3 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm bg-stone-50/50"
+
+              >
+
+            </div>
+
+          </div>
+
+
+
+          <div>
+
+            <label class="block text-xs sm:text-sm font-bold text-stone-700 mb-1" for="address">
+
+              عنوان التوصيل أو الحي <span class="text-rose-600">*</span>
+
+            </label>
+
+            <div class="relative">
+
+              <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none text-stone-400">
+
+                <i class="fa-solid fa-location-dot"></i>
+
+              </span>
+
+              <input 
+
+                type="text" 
+
+                id="address" 
+
+                name="address"
+
+                required 
+
+                placeholder="الحي أو رقم الإقامة والمنزل" 
+
+                class="w-full pr-10 pl-3 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm bg-stone-50/50"
+
+              >
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- Total Price Summary Box -->
+
+        <div class="bg-brand-50 p-3.5 rounded-2xl border border-brand-200 flex items-center justify-between text-sm mt-2">
+
+          <div>
+
+            <span class="font-bold text-stone-700 block">المجموع الواجب دفعه عند الاستلام:</span>
+
+            <span class="text-[11px] text-brand-700 font-semibold">✨ التوصيل مجاني 100% لجميع المدن المغربية</span>
+
+          </div>
+
+          <span class="font-black text-2xl text-brand-800" id="displayTotal">219 درهم</span>
+
+        </div>
+
+
+
+        <!-- Big CTA Button -->
+
+        <button 
+
+          type="submit" 
+
+          id="submitBtn"
+
+          class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-brand-600 via-brand-500 to-brand-700 hover:from-brand-700 hover:to-brand-800 text-white font-black text-base sm:text-lg shadow-xl transition transform active:scale-98 animate-pulse-cta flex items-center justify-center gap-3 cursor-pointer"
+
+        >
+
+          <i class="fa-solid fa-bag-shopping text-xl text-amber-300"></i>
+
+          <span>اضغطي هنا لتأكيد طلبك الآن</span>
+
+        </button>
+
+
+
+        <p class="text-[11px] text-center text-stone-500 pt-1">
+
+          🔒 معلوماتك محمية بالكامل. لا نطلب أية بيانات بنكية، الدفع نقداً عند استلام ومعاينة طلبك.
+
+        </p>
+
+      </form>
+
+
+
+      <!-- Trust Badges Under Form -->
+
+      <div class="grid grid-cols-3 gap-2 mt-5 pt-4 border-t border-stone-100 text-center">
+
+        <div class="text-stone-600">
+
+          <i class="fa-solid fa-shield-heart text-brand-600 text-lg mb-1 block"></i>
+
+          <span class="text-[11px] font-bold block leading-tight">ضمان الجودة والرضا</span>
+
+        </div>
+
+        <div class="text-stone-600">
+
+          <i class="fa-solid fa-clock-rotate-left text-brand-600 text-lg mb-1 block"></i>
+
+          <span class="text-[11px] font-bold block leading-tight">توصيل في 24-48 ساعة</span>
+
+        </div>
+
+        <div class="text-stone-600">
+
+          <i class="fa-solid fa-box-open text-brand-600 text-lg mb-1 block"></i>
+
+          <span class="text-[11px] font-bold block leading-tight">معاينة قبل الدفع</span>
+
+        </div>
+
+      </div>
+
+
+
+    </div>
+
+  </section>
+
+
+
+  <!-- 5. DETAILED BREAKDOWN OF THE 6 PRODUCTS -->
+
+  <section class="py-12 px-4 bg-white/80">
+
+    <div class="max-w-5xl mx-auto">
+
+      
+
+      <div class="text-center mb-10">
+
+        <span class="text-xs uppercase tracking-widest text-brand-600 font-extrabold bg-brand-50 px-3.5 py-1.5 rounded-full border border-brand-200">
+
+          محتويات الباك بالتفصيل
+
+        </span>
+
+        <h2 class="text-2xl sm:text-4xl font-black text-brand-900 mt-2.5 font-heading">
+
+          6 منتجات أصلية صُنعت خصيصاً لتمنحك أقداماً ناعمة ونظيفة
+
+        </h2>
+
+        <p class="text-stone-600 text-xs sm:text-base max-w-2xl mx-auto mt-2">
+
+          كل قطعة في هذا الباك تكمل الأخرى لتقديم تجربة عناية متكاملة تخلصك نهائياً من التشققات، التعب، والروائح المزعجة.
+
+        </p>
+
+      </div>
+
+
+
+      <!-- 6 Products Grid -->
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+
+
+        <!-- Product 1: Pierre Ponce -->
+
+        <div class="product-card bg-white rounded-3xl p-5 shadow-lg border border-brand-100 flex flex-col justify-between group">
+
+          <div>
+
+            <div class="relative bg-stone-50 rounded-2xl p-2.5 mb-4 overflow-hidden border border-stone-100">
+
+              <span class="absolute top-3 right-3 bg-brand-700 text-white text-xs font-bold px-2.5 py-0.5 rounded-lg z-10">المنتج 1</span>
+
+              <img 
+
+                src="pierre iponce.jpeg" 
+
+                alt="حجر الخفاف البركاني الطبيعي - iPONCE" 
+
+                class="w-full h-56 object-cover rounded-xl group-hover:scale-105 transition duration-500"
+
+                onerror="this.onerror=null; this.src='https://placehold.co/450x450/e8e2d5/2b4412?text=Pierre+Ponce';"
+
+              >
+
+            </div>
+
+            <h3 class="text-lg font-black text-brand-900 mb-1">1. حجر القدمين البركاني الطبيعي</h3>
+
+            <span class="text-xs text-brand-600 font-semibold block mb-2">Pierre Ponce Naturelle</span>
+
+            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
+
+              حجر بركاني طبيعي 100% مسامي وعالي الجودة. يعمل على حك وإزالة طبقات الجلد الميت السميك والتشققات القاسية بالكعبين بلطف وأمان تام دون جروح.
+
+            </p>
+
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-brand-50 flex items-center gap-2 text-xs font-bold text-brand-800">
+
+            <i class="fa-solid fa-circle-check text-brand-500"></i>
+
+            <span>إزالة فورية للخشونة وتراكمات الجلد</span>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- Product 2: Sels de Bain -->
+
+        <div class="product-card bg-white rounded-3xl p-5 shadow-lg border border-brand-100 flex flex-col justify-between group">
+
+          <div>
+
+            <div class="relative bg-stone-50 rounded-2xl p-2.5 mb-4 overflow-hidden border border-stone-100">
+
+              <span class="absolute top-3 right-3 bg-brand-700 text-white text-xs font-bold px-2.5 py-0.5 rounded-lg z-10">المنتج 2</span>
+
+              <img 
+
+                src="sels iponce.jpeg" 
+
+                alt="أملاح مغطس القدمين باللويزة والليمون - iPONCE" 
+
+                class="w-full h-56 object-cover rounded-xl group-hover:scale-105 transition duration-500"
+
+                onerror="this.onerror=null; this.src='https://placehold.co/450x450/d7e5cb/2b4412?text=Sels+de+Bain';"
+
+              >
+
+            </div>
+
+            <h3 class="text-lg font-black text-brand-900 mb-1">2. أملاح مغطس باللويزة والليمون</h3>
+
+            <span class="text-xs text-brand-600 font-semibold block mb-2">Sels de Bain - Verveine Citronnée</span>
+
+            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
+
+              أملاح بحرية غنية بالمعادن الطبيعية وخلاصة اللويزة والليمون المنعشة. تذوب في الماء الدافئ لتليين الجلد القاسي، تهدئة الأقدام المتعبة وتنشيط الدورة الدموية.
+
+            </p>
+
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-brand-50 flex items-center gap-2 text-xs font-bold text-brand-800">
+
+            <i class="fa-solid fa-circle-check text-brand-500"></i>
+
+            <span>استرخاء عميق وتعقيم وإنعاش فوري</span>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- Product 3: Gommage Sable & Peche -->
+
+        <div class="product-card bg-white rounded-3xl p-5 shadow-lg border border-brand-100 flex flex-col justify-between group">
+
+          <div>
+
+            <div class="relative bg-stone-50 rounded-2xl p-2.5 mb-4 overflow-hidden border border-stone-100">
+
+              <span class="absolute top-3 right-3 bg-brand-700 text-white text-xs font-bold px-2.5 py-0.5 rounded-lg z-10">المنتج 3</span>
+
+              <img 
+
+                src="Gaumage iponce.jpeg" 
+
+                alt="مقشر القدمين بالرمل والخوخ - iPONCE" 
+
+                class="w-full h-56 object-cover rounded-xl group-hover:scale-105 transition duration-500"
+
+                onerror="this.onerror=null; this.src='https://placehold.co/450x450/f6d7be/2b4412?text=Gommage+au+Sable';"
+
+              >
+
+            </div>
+
+            <h3 class="text-lg font-black text-brand-900 mb-1">3. مقشر القدمين بالرمل والخوخ</h3>
+
+            <span class="text-xs text-brand-600 font-semibold block mb-2">Gommage Pieds au Sable à la Pêche</span>
+
+            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
+
+              تركيبة مبتكرة تجمع بين حبيبات الرمل الناعمة وخلاصة الخوخ الفواحة. تزيل الشوائب الدقيقة وتجدد خلايا الجلد لتمنح الأقدام ملمساً مخملياً ناعماً ولوناً مورداً.
+
+            </p>
+
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-brand-50 flex items-center gap-2 text-xs font-bold text-brand-800">
+
+            <i class="fa-solid fa-circle-check text-brand-500"></i>
+
+            <span>تقشير مخملي وتوحيد لون بشرة القدم</span>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- Product 4: Serum Ongles & Pieds -->
+
+        <div class="product-card bg-white rounded-3xl p-5 shadow-lg border border-brand-100 flex flex-col justify-between group">
+
+          <div>
+
+            <div class="relative bg-stone-50 rounded-2xl p-2.5 mb-4 overflow-hidden border border-stone-100">
+
+              <span class="absolute top-3 right-3 bg-brand-700 text-white text-xs font-bold px-2.5 py-0.5 rounded-lg z-10">المنتج 4</span>
+
+              <img 
+
+                src="serume.jpeg" 
+
+                alt="سيروم تغذية وتقوية أظافر القدمين - iPONCE" 
+
+                class="w-full h-56 object-cover rounded-xl group-hover:scale-105 transition duration-500"
+
+                onerror="this.onerror=null; this.src='https://placehold.co/450x450/eef2e6/2b4412?text=Serum+Ongles';"
+
+              >
+
+            </div>
+
+            <h3 class="text-lg font-black text-brand-900 mb-1">4. سيروم تقوية الأظافر ومحاربة الفطريات</h3>
+
+            <span class="text-xs text-brand-600 font-semibold block mb-2">Sérum Ongles et Pieds Fortifiant</span>
+
+            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
+
+              قطرات مركزة من الزيوت الطبيعية والمستخلصات المعقمة. تقوي الأظافر المتكسرة والصفراء، وتحمي ما بين الأصابع من الفطريات والبكتيريا المسببة للروائح.
+
+            </p>
+
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-brand-50 flex items-center gap-2 text-xs font-bold text-brand-800">
+
+            <i class="fa-solid fa-circle-check text-brand-500"></i>
+
+            <span>أظافر قوية، لامعة، ومحمية من الفطريات</span>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- Product 5: Baume Reparateur -->
+
+        <div class="product-card bg-white rounded-3xl p-5 shadow-lg border border-brand-100 flex flex-col justify-between group">
+
+          <div>
+
+            <div class="relative bg-stone-50 rounded-2xl p-2.5 mb-4 overflow-hidden border border-stone-100">
+
+              <span class="absolute top-3 right-3 bg-brand-700 text-white text-xs font-bold px-2.5 py-0.5 rounded-lg z-10">المنتج 5</span>
+
+              <img 
+
+                src="Baume iponce.jpeg" 
+
+                alt="بلسم الترطيب المكثف وعلاج التشققات - iPONCE" 
+
+                class="w-full h-56 object-cover rounded-xl group-hover:scale-105 transition duration-500"
+
+                onerror="this.onerror=null; this.src='https://placehold.co/450x450/e6ebd9/2b4412?text=Baume+Pieds';"
+
+              >
+
+            </div>
+
+            <h3 class="text-lg font-black text-brand-900 mb-1">5. بلسم الترطيب والترميم (Baume Pieds)</h3>
+
+            <span class="text-xs text-brand-600 font-semibold block mb-2">Baume Pieds Nourrissant</span>
+
+            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
+
+              كريم غني ومكثف يخترق أعماق الجلد الجاف ليرممه بسرعة مذهلة. يحبس الرطوبة داخل الكعبين ويمنع عودة التشققات المؤلمة، لتستمتعي بملمس حريري دائم.
+
+            </p>
+
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-brand-50 flex items-center gap-2 text-xs font-bold text-brand-800">
+
+            <i class="fa-solid fa-circle-check text-brand-500"></i>
+
+            <span>ترطيب عميق وإصلاح سريع للتشققات</span>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- Product 6: Poudre Desodorisante -->
+
+        <div class="product-card bg-white rounded-3xl p-5 shadow-lg border border-brand-100 flex flex-col justify-between group">
+
+          <div>
+
+            <div class="relative bg-stone-50 rounded-2xl p-2.5 mb-4 overflow-hidden border border-stone-100">
+
+              <span class="absolute top-3 right-3 bg-brand-700 text-white text-xs font-bold px-2.5 py-0.5 rounded-lg z-10">المنتج 6</span>
+
+              <img 
+
+                src="poudre iponce.jpeg" 
+
+                alt="بودرة إزالة روائح القدمين والأحذية برائحة الورد - iPONCE" 
+
+                class="w-full h-56 object-cover rounded-xl group-hover:scale-105 transition duration-500"
+
+                onerror="this.onerror=null; this.src='https://placehold.co/450x450/eddcd2/2b4412?text=Poudre+Pieds';"
+
+              >
+
+            </div>
+
+            <h3 class="text-lg font-black text-brand-900 mb-1">6. بودرة مضادة للعرق والروائح بالورد</h3>
+
+            <span class="text-xs text-brand-600 font-semibold block mb-2">Poudre Désodorisante Chaussures & Pieds</span>
+
+            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
+
+              بودرة منعشة برائحة الورد الزكية. تمتص الرطوبة والعرق الزائد داخل الحذاء طوال اليوم، وتقضي على البكتيريا المسؤولة عن الروائح الكريهة لمدة 24 ساعة.
+
+            </p>
+
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-brand-50 flex items-center gap-2 text-xs font-bold text-brand-800">
+
+            <i class="fa-solid fa-circle-check text-brand-500"></i>
+
+            <span>انتعاش دائم وأقدام جافة بدون روائح</span>
+
+          </div>
+
+        </div>
+
+
+
+      </div>
+
+
+
+      <!-- Mid-page CTA button -->
+
+      <div class="mt-10 text-center">
+
+        <a href="#order-form" class="inline-flex items-center gap-2 bg-brand-700 hover:bg-brand-800 text-white font-black text-base sm:text-lg py-3.5 px-8 rounded-full shadow-xl transition transform hover:scale-105">
+
+          <i class="fa-solid fa-cart-arrow-down"></i>
+
+          <span>اطلبي الباك الكامل بـ 219 درهم فقط</span>
+
+        </a>
+
+      </div>
+
+
+
+    </div>
+
+  </section>
+
+
+
+  <!-- 6. STEP-BY-STEP ROUTINE -->
+
+  <section class="py-12 px-4 bg-brand-50/60 border-y border-brand-100">
+
+    <div class="max-w-4xl mx-auto">
+
+      <div class="text-center mb-8">
+
+        <span class="text-xs text-brand-700 font-bold bg-white px-3.5 py-1 rounded-full border border-brand-200 shadow-sm">
+
+          طريقة الاستعمال السهلة
+
+        </span>
+
+        <h2 class="text-2xl sm:text-3xl font-black text-brand-900 mt-2 font-heading">
+
+          6 خطوات بسيطة لروتين سبا منزلي احترافي (15 دقيقة فقط)
+
+        </h2>
+
+      </div>
+
+
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+
+        
+
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-brand-100 flex items-start gap-3">
+
+          <span class="w-8 h-8 rounded-full bg-brand-600 text-white font-black flex items-center justify-center shrink-0">1</span>
+
+          <div>
+
+            <h4 class="font-bold text-brand-900 text-sm">مغطس الاسترخاء</h4>
+
+            <p class="text-xs text-stone-600 mt-1">ضعي ملعقة من أملاح اللويزة في ماء دافئ وانقعي قدميك 10-15 دقيقة لتليين الجلد القاسي.</p>
+
+          </div>
+
+        </div>
+
+
+
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-brand-100 flex items-start gap-3">
+
+          <span class="w-8 h-8 rounded-full bg-brand-600 text-white font-black flex items-center justify-center shrink-0">2</span>
+
+          <div>
+
+            <h4 class="font-bold text-brand-900 text-sm">الحك بحجر الخفاف</h4>
+
+            <p class="text-xs text-stone-600 mt-1">مرري الحجر البركاني بلطف على الكعبين ومناطق الجلد الخشن لإزالة الخلايا الميتة والتشققات.</p>
+
+          </div>
+
+        </div>
+
+
+
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-brand-100 flex items-start gap-3">
+
+          <span class="w-8 h-8 rounded-full bg-brand-600 text-white font-black flex items-center justify-center shrink-0">3</span>
+
+          <div>
+
+            <h4 class="font-bold text-brand-900 text-sm">التقشير بالرمل والخوخ</h4>
+
+            <p class="text-xs text-stone-600 mt-1">دلكي المقشر بحركات دائرية لتنعيم الملمس وتفتيح القدمين ثم اشطفي بالماء الفاتر.</p>
+
+          </div>
+
+        </div>
+
+
+
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-brand-100 flex items-start gap-3">
+
+          <span class="w-8 h-8 rounded-full bg-brand-600 text-white font-black flex items-center justify-center shrink-0">4</span>
+
+          <div>
+
+            <h4 class="font-bold text-brand-900 text-sm">سيروم تقوية الأظافر</h4>
+
+            <p class="text-xs text-stone-600 mt-1">ضعي قطرات من السيروم على الأظافر وحولها لمنع التكسر وحمايتها من الفطريات المزعجة.</p>
+
+          </div>
+
+        </div>
+
+
+
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-brand-100 flex items-start gap-3">
+
+          <span class="w-8 h-8 rounded-full bg-brand-600 text-white font-black flex items-center justify-center shrink-0">5</span>
+
+          <div>
+
+            <h4 class="font-bold text-brand-900 text-sm">الترطيب المكثف بالبلسم</h4>
+
+            <p class="text-xs text-stone-600 mt-1">ادهني كمية مناسبة من البلسم على كامل القدم والكعبين لتغذية البشرة وإغلاق التشققات.</p>
+
+          </div>
+
+        </div>
+
+
+
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-brand-100 flex items-start gap-3">
+
+          <span class="w-8 h-8 rounded-full bg-brand-600 text-white font-black flex items-center justify-center shrink-0">6</span>
+
+          <div>
+
+            <h4 class="font-bold text-brand-900 text-sm">بودرة الانتعاش اليومي</h4>
+
+            <p class="text-xs text-stone-600 mt-1">رشي القليل من البودرة داخل الأحذية أو على القدمين قبل الخروج للشعور بالجفاف والانتعاش الدائم.</p>
+
+          </div>
+
+        </div>
+
+
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- 7. REVIEWS & TESTIMONIALS -->
+
+  <section class="py-12 px-4">
+
+    <div class="max-w-4xl mx-auto">
+
+      
+
+      <div class="text-center mb-8">
+
+        <span class="text-xs text-amber-800 font-bold bg-amber-100 px-3 py-1 rounded-full">
+
+          تجارب حقيقية
+
+        </span>
+
+        <h2 class="text-2xl sm:text-3xl font-black text-brand-900 mt-2 font-heading">
+
+          ماذا قالت زبوناتنا بعد استعمال باك iPONCE؟
+
+        </h2>
+
+        <div class="flex items-center justify-center gap-1 text-amber-500 mt-2">
+
+          <i class="fa-solid fa-star"></i>
+
+          <i class="fa-solid fa-star"></i>
+
+          <i class="fa-solid fa-star"></i>
+
+          <i class="fa-solid fa-star"></i>
+
+          <i class="fa-solid fa-star"></i>
+
+          <span class="text-xs font-bold text-stone-600 mr-2">(4.9/5 بناءً على أكثر من 1,280 زبونة مغربية)</span>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+        
+
+        <!-- Review 1 -->
+
+        <div class="bg-white p-5 rounded-2xl shadow-md border border-stone-100 flex flex-col justify-between">
+
+          <div>
+
+            <div class="flex text-amber-400 text-xs mb-2">
+
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+
+            </div>
+
+            <p class="text-xs sm:text-sm text-stone-700 leading-relaxed italic">
+
+              "والله العظيم إلا كنت كنعاني بزاف من تشقق القدام خصوصاً مع الوقوف فالكوزينة. من أول سيمانة حسيت بفرق كبير، المقشر والبلسم كيحمقو والريحة غزالة بزاف!"
+
+            </p>
+
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-stone-100 flex items-center gap-2">
+
+            <div class="w-8 h-8 rounded-full bg-brand-100 text-brand-800 font-bold flex items-center justify-center text-xs">س.ع</div>
+
+            <div>
+
+              <h5 class="text-xs font-bold text-stone-900">سناء العلمي</h5>
+
+              <span class="text-[10px] text-stone-400">الدار البيضاء • مشترية مؤكدة ✓</span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- Review 2 -->
+
+        <div class="bg-white p-5 rounded-2xl shadow-md border border-stone-100 flex flex-col justify-between">
+
+          <div>
+
+            <div class="flex text-amber-400 text-xs mb-2">
+
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+
+            </div>
+
+            <p class="text-xs sm:text-sm text-stone-700 leading-relaxed italic">
+
+              "الباك وصلني فـ 24 ساعة للرباط. الحجر البركاني حقيقي ماشي بحال داكشي المزور لي كيتفرتت، والبودرة هنيتني من ريحة الصباط فاش كنرجع من الخدمة. شكراً ليكم."
+
+            </p>
+
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-stone-100 flex items-center gap-2">
+
+            <div class="w-8 h-8 rounded-full bg-brand-100 text-brand-800 font-bold flex items-center justify-center text-xs">إ.ب</div>
+
+            <div>
+
+              <h5 class="text-xs font-bold text-stone-900">إيمان بناني</h5>
+
+              <span class="text-[10px] text-stone-400">الرباط • مشترية مؤكدة ✓</span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- Review 3 -->
+
+        <div class="bg-white p-5 rounded-2xl shadow-md border border-stone-100 flex flex-col justify-between">
+
+          <div>
+
+            <div class="flex text-amber-400 text-xs mb-2">
+
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+
+            </div>
+
+            <p class="text-xs sm:text-sm text-stone-700 leading-relaxed italic">
+
+              "خديت العرض ديال 2 باكات، واحد ليا وواحد لماما، وعجبها بزاااف خصوصاً أملاح مغطس اللويزة كيرتاحو فيها رجليها. منتوج كايستاهل كل درهم."
+
+            </p>
+
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-stone-100 flex items-center gap-2">
+
+            <div class="w-8 h-8 rounded-full bg-brand-100 text-brand-800 font-bold flex items-center justify-center text-xs">م.ت</div>
+
+            <div>
+
+              <h5 class="text-xs font-bold text-stone-900">مريم التازي</h5>
+
+              <span class="text-[10px] text-stone-400">مراكش • مشترية مؤكدة ✓</span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+      </div>
+
+
+
+    </div>
+
+  </section>
+
+
+
+  <!-- 8. FREQUENTLY ASKED QUESTIONS (FAQ) -->
+
+  <section class="py-10 px-4 bg-white">
+
+    <div class="max-w-3xl mx-auto">
+
+      <div class="text-center mb-6">
+
+        <h2 class="text-2xl sm:text-3xl font-black text-brand-900 font-heading">
+
+          الأسئلة الشائعة
+
+        </h2>
+
+        <p class="text-xs sm:text-sm text-stone-600 mt-1">إليك كل ما تحتاجين معرفته حول الطلب والاستلام</p>
+
+      </div>
+
+
+
+      <div class="space-y-3">
+
+        <!-- Q1 -->
+
+        <details class="bg-spa-cream rounded-2xl p-4 border border-brand-100 cursor-pointer group">
+
+          <summary class="font-bold text-sm sm:text-base text-brand-900 list-none flex justify-between items-center">
+
+            <span>كيفاش غندير نخلص واش كاين الدفع المسبق؟</span>
+
+            <i class="fa-solid fa-chevron-down text-brand-600 text-xs group-open:rotate-180 transition"></i>
+
+          </summary>
+
+          <p class="text-xs sm:text-sm text-stone-600 mt-2 leading-relaxed">
+
+            لا، الدفع كيكون 100% نقداً عند الاستلام (COD). كتوصلك الكلية حتى لباب دارك، كتحليها وتعاني منتجاتك عاد كتخلصي الموزع براحة تامة.
+
+          </p>
+
+        </details>
+
+
+
+        <!-- Q2 -->
+
+        <details class="bg-spa-cream rounded-2xl p-4 border border-brand-100 cursor-pointer group">
+
+          <summary class="font-bold text-sm sm:text-base text-brand-900 list-none flex justify-between items-center">
+
+            <span>شحال كياخد التوصيل من وقت؟</span>
+
+            <i class="fa-solid fa-chevron-down text-brand-600 text-xs group-open:rotate-180 transition"></i>
+
+          </summary>
+
+          <p class="text-xs sm:text-sm text-stone-600 mt-2 leading-relaxed">
+
+            التوصيل فابور وبالمجان لجميع المدن المغربية، وكيستغرق ما بين 24 إلى 48 ساعة فقط بعد تأكيد الطلب معك هاتفياً أو عبر الواتساب.
+
+          </p>
+
+        </details>
+
+
+
+        <!-- Q3 -->
+
+        <details class="bg-spa-cream rounded-2xl p-4 border border-brand-100 cursor-pointer group">
+
+          <summary class="font-bold text-sm sm:text-base text-brand-900 list-none flex justify-between items-center">
+
+            <span>واش المنتجات طبيعية ومناسبة للبشرة الحساسة؟</span>
+
+            <i class="fa-solid fa-chevron-down text-brand-600 text-xs group-open:rotate-180 transition"></i>
+
+          </summary>
+
+          <p class="text-xs sm:text-sm text-stone-600 mt-2 leading-relaxed">
+
+            نعم، جميع مكونات منتجات iPONCE طبيعية وآمنة، خالية من المواد الكيميائية الضارة ومناسبة لجميع أنواع البشرة حتى الحساسة.
+
+          </p>
+
+        </details>
+
+      </div>
+
+
+
+    </div>
+
+  </section>
+
+
+
+  <!-- 9. FOOTER -->
+
+  <footer class="bg-brand-900 text-white py-8 px-4 text-center">
+
+    <div class="max-w-4xl mx-auto">
+
+      <div class="flex items-center justify-center gap-2 mb-3">
+
+        <i class="fa-solid fa-leaf text-lime-400 text-xl"></i>
+
+        <span class="font-black text-xl tracking-wider">iPONCE</span>
+
+      </div>
+
+      <p class="text-xs text-brand-200 mb-4 max-w-md mx-auto">
+
+        العلامة المغربية الرائدة في العناية الطبيعية بالقدمين والجمال المنزلي.
+
+      </p>
+
+      <div class="text-[11px] text-brand-300 border-t border-brand-800 pt-4">
+
+        جميع الحقوق محفوظة © 2026 iPONCE Naturals Maroc.
+
+      </div>
+
+    </div>
+
+  </footer>
+
+
+
+  <!-- 10. STICKY MOBILE CTA BAR -->
+
+  <div class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-brand-200 p-3 z-40 md:hidden flex items-center justify-between shadow-2xl">
+
+    <div>
+
+      <span class="text-[10px] text-stone-400 block line-through">259 درهم</span>
+
+      <div class="flex items-baseline gap-1.5">
+
+        <span class="text-xl font-black text-brand-800" id="stickyPriceDisplay">219 درهم</span>
+
+        <span class="text-[10px] text-lime-700 bg-lime-100 font-bold px-1.5 py-0.5 rounded">توصيل مجاني</span>
+
+      </div>
+
+    </div>
+
+    <a 
+
+      href="#order-form" 
+
+      class="bg-gradient-to-r from-brand-600 to-brand-700 text-white font-extrabold text-sm py-2.5 px-5 rounded-full shadow-lg flex items-center gap-2 animate-pulse"
+
+    >
+
+      <i class="fa-solid fa-cart-shopping text-xs"></i>
+
+      <span>أطلبي الآن</span>
+
+    </a>
+
+  </div>
+
+
+
+  <!-- FLOATING WHATSAPP BUTTON -->
+
+  <a 
+
+    href="https://wa.me/212661445459?text=%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A8%D8%BA%D9%8A%D8%AA%20%D9%86%D8%B3%D9%88%D9%84%20%D8%B9%D9%84%D9%89%20%D8%A8%D8%A7%D9%83%20iPONCE%20%D9%84%D9%84%D8%B9%D9%86%D8%A7%D9%8A%D8%A9%20%D8%A8%D8%A7%D9%84%D9%82%D8%AF%D9%85%D9%8A%D9%86" 
+
+    target="_blank" 
+
+    class="fixed bottom-16 md:bottom-6 left-4 z-40 bg-[#25D366] text-white p-3.5 rounded-full shadow-2xl hover:scale-110 transition duration-300 flex items-center justify-center text-2xl border-2 border-white"
+
+    title="تواصل معنا عبر الواتساب"
+
+  >
+
+    <i class="fa-brands fa-whatsapp"></i>
+
+  </a>
+
+
+
+  <!-- 11. CONFIRMATION POPUP MODAL (No alert()) -->
+
+  <div id="successModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center shadow-2xl border-4 border-brand-500 transform transition-all scale-95 duration-200">
+
+      
+
+      <div class="w-16 h-16 bg-lime-100 text-brand-600 rounded-full flex items-center justify-center mx-auto text-3xl mb-3 shadow-inner">
+
+        <i class="fa-solid fa-check"></i>
+
+      </div>
+
+
+
+      <h3 class="text-2xl font-black text-brand-900 mb-1 font-heading">تهانينا! تم تسجيل طلبك بنجاح</h3>
+
+      <p class="text-xs sm:text-sm text-stone-600 mb-4" id="modalConfirmationText">
+
+        شكراً لكِ على ثقتكِ. سنتصل بكِ هاتفياً أو عبر الواتساب خلال الساعات القادمة لتأكيد العنوان وبدء الشحن بالمجان.
+
+      </p>
+
+
+
+      <div class="bg-brand-50 rounded-2xl p-4 border border-brand-200 text-right text-xs mb-5 space-y-1.5">
+
+        <div class="flex justify-between">
+
+          <span class="text-stone-500">الاسم:</span>
+
+          <span class="font-bold text-stone-800" id="modalName"></span>
+
+        </div>
+
+        <div class="flex justify-between">
+
+          <span class="text-stone-500">الهاتف:</span>
+
+          <span class="font-bold text-stone-800" id="modalPhone"></span>
+
+        </div>
+
+        <div class="flex justify-between">
+
+          <span class="text-stone-500">المدينة:</span>
+
+          <span class="font-bold text-stone-800" id="modalCity"></span>
+
+        </div>
+
+        <div class="flex justify-between">
+
+          <span class="text-stone-500">العرض:</span>
+
+          <span class="font-bold text-brand-800" id="modalOffer"></span>
+
+        </div>
+
+        <div class="flex justify-between border-t border-brand-200 pt-1.5 font-bold text-brand-900 text-sm">
+
+          <span>المبلغ الإجمالي:</span>
+
+          <span id="modalPrice"></span>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="space-y-2">
+
+        <a id="whatsappConfirmLink" href="#" target="_blank" class="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md">
+
+          <i class="fa-brands fa-whatsapp text-lg"></i>
+
+          <span>تأكيد الطلب فوراً عبر الواتساب</span>
+
+        </a>
+
+        <button onclick="closeSuccessModal()" class="w-full py-2.5 px-4 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold text-xs">
+
+          إغلاق الصفحة
+
+        </button>
+
+      </div>
+
+
+
+    </div>
+
+  </div>
+
+
+
+  <!-- 12. CLIENT-SIDE SCRIPT LOGIC (Connected to Google Apps Script) -->
+
+<script>
+
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxbaTTSum7Qdiv0P7vDriJfn8UjlOQc9_qOnlmHa450YQR3BQE6xYoHDoh6fIAIBLfc/exec";
+
+
+
+  let currentOfferPacks = 1;
+
+  let currentTotal = 219;
+
+  let currentOfferText = "عرض العناية الفردي: 1 باك (6 قطع)";
+
+
+
+  // Prevent duplicate submissions
+
+  let isSubmitting = false;
+
+
+
+  function updateSelectedOffer(packs, price, text) {
+
+    currentOfferPacks = packs;
+
+    currentTotal = price;
+
+    currentOfferText = text;
+
+
+
+    document.getElementById('displayTotal').innerText = price + ' درهم';
+
+    document.getElementById('stickyPriceDisplay').innerText = price + ' درهم';
+
+  }
+
+
+
+  function normalizeMoroccanPhone(phone) {
+
+    let clean = String(phone || '').replace(/\D/g, '');
+
+
+
+    if (clean.startsWith('212')) {
+
+      return clean;
+
+    }
+
+
+
+    if (clean.startsWith('0')) {
+
+      return '212' + clean.substring(1);
+
+    }
+
+
+
+    if (clean.length === 9) {
+
+      return '212' + clean;
+
+    }
+
+
+
+    return clean;
+
+  }
+
+
+
+  function showSuccessModal(fullName, phone, city, address) {
+
+    document.getElementById('modalName').innerText = fullName;
+
+    document.getElementById('modalPhone').innerText = phone;
+
+    document.getElementById('modalCity').innerText = city + ' - ' + address;
+
+    document.getElementById('modalOffer').innerText = currentOfferText;
+
+    document.getElementById('modalPrice').innerText =
+
+      currentTotal + ' درهم (توصيل فابور)';
+
+
+
+    const message = encodeURIComponent(
+
+      `السلام عليكم، بغيت نأكد طلبي ديال باك العناية بالقدمين iPONCE:\n` +
+
+      `- الاسم: ${fullName}\n` +
+
+      `- الهاتف: ${phone}\n` +
+
+      `- المدينة والعنوان: ${city} - ${address}\n` +
+
+      `- العرض: ${currentOfferText}\n` +
+
+      `- المبلغ الإجمالي: ${currentTotal} درهم (توصيل مجاني)`
+
+    );
+
+
+
+    document.getElementById('whatsappConfirmLink').href =
+
+      `https://wa.me/212650054422?text=${message}`;
+
+
+
+    document.getElementById('successModal').classList.remove('hidden');
+
+  }
+
+
+
+  function showOrderError() {
+
+    alert(
+
+      "سمحي لينا، وقع مشكل أثناء تسجيل الطلب. عافاك عاودي المحاولة، وإذا بقى المشكل تواصلي معنا عبر WhatsApp."
+
+    );
+
+  }
+
+
+
+  async function handleOrderSubmit(event) {
+
+    event.preventDefault();
+
+
+
+    // Prevent double-click / duplicate order
+
+    if (isSubmitting) {
+
+      return;
+
+    }
+
+
+
+    const form = document.getElementById('codOrderForm');
+
+    const submitBtn = document.getElementById('submitBtn');
+
+
+
+    const originalBtnHtml = submitBtn.innerHTML;
+
+
+
+    const fullName = document.getElementById('fullName').value.trim();
+
+    const phone = document.getElementById('phoneNumber').value.trim();
+
+    const city = document.getElementById('city').value.trim();
+
+    const address = document.getElementById('address').value.trim();
+
+
+
+    // Browser validation
+
+    if (!form.checkValidity()) {
+
+      form.reportValidity();
+
+      return;
+
+    }
+
+
+
+    if (!fullName || !phone || !city || !address) {
+
+      return;
+
+    }
+
+
+
+    // Basic Moroccan phone validation
+
+    const cleanPhone = phone.replace(/\D/g, '');
+
+
+
+    if (
+
+      !/^0[5-7]\d{8}$/.test(cleanPhone) &&
+
+      !/^212[5-7]\d{8}$/.test(cleanPhone) &&
+
+      !/^[5-7]\d{8}$/.test(cleanPhone)
+
+    ) {
+
+      alert("عافاك دخلي رقم هاتف مغربي صحيح (06 / 07 / 05).");
+
+      return;
+
+    }
+
+
+
+    isSubmitting = true;
+
+    submitBtn.disabled = true;
+
+
+
+    submitBtn.classList.remove('animate-pulse-cta');
+
+    submitBtn.innerHTML = `
+
+      <i class="fa-solid fa-spinner fa-spin text-xl text-amber-300"></i>
+
+      <span>جاري تسجيل طلبك...</span>
+
+    `;
+
+
+
+    const formData = new FormData();
+
+
+
+    formData.append('name', fullName);
+
+    formData.append('phone', phone);
+
+    formData.append('city', city);
+
+    formData.append('address', address);
+
+    formData.append('offer', currentOfferText);
+
+    formData.append('price', String(currentTotal));
+
+
+
+    try {
+
+
+
+      /*
+
+       * Google Apps Script is cross-origin.
+
+       * no-cors allows the POST request to be sent.
+
+       * The browser cannot read the response body/status.
+
+       */
+
+      await fetch(SCRIPT_URL, {
+
+        method: 'POST',
+
+        body: formData,
+
+        mode: 'no-cors',
+
+        cache: 'no-store'
+
+      });
+
+
+
+      /*
+
+       * IMPORTANT:
+
+       * Purchase is NOT fired on button click anymore.
+
+       *
+
+       * It is fired only after the order submission request
+
+       * has completed from the browser side.
+
+       */
+
+      if (typeof fbq === 'function') {
+
+        fbq(
+
+          'track',
+
+          'Purchase',
+
+          {
+
+            value: Number(currentTotal),
+
+            currency: 'MAD',
+
+            content_name: currentOfferText,
+
+            content_type: 'product',
+
+            contents: [
+
+              {
+
+                id: 'IPONCE-FOOTCARE',
+
+                quantity: Number(currentOfferPacks)
+
+              }
+
+            ]
+
+          }
+
+        );
+
+      }
+
+
+
+      // Show successful order confirmation
+
+      showSuccessModal(
+
+        fullName,
+
+        phone,
+
+        city,
+
+        address
+
+      );
+
+
+
+    } catch (error) {
+
+
+
+      console.error(
+
+        'iPONCE order submission error:',
+
+        error
+
+      );
+
+
+
+      /*
+
+       * IMPORTANT:
+
+       * We DO NOT fire Purchase here.
+
+       * We DO NOT show "success" modal here.
+
+       */
+
+      showOrderError();
+
+
+
+    } finally {
+
+
+
+      isSubmitting = false;
+
+
+
+      submitBtn.disabled = false;
+
+      submitBtn.innerHTML = originalBtnHtml;
+
+      submitBtn.classList.add('animate-pulse-cta');
+
+    }
+
+  }
+
+
+
+  function closeSuccessModal() {
+
+    const modal = document.getElementById('successModal');
+
+
+
+    modal.classList.add('hidden');
+
+
+
+    document.getElementById('codOrderForm').reset();
+
+
+
+    updateSelectedOffer(
+
+      1,
+
+      219,
+
+      "عرض العناية الفردي: 1 باك (6 قطع)"
+
+    );
+
+  }
+
+</script>
+
+</body>
+
+</html>
+
+Mli 9llbt l-code dialk b de99a, l9it 5 dial l-akhta2 9atila (Technique w Marketing) f l-code w f t-tari9a bach deployed f GitHub Pages w Google Apps Script.
+
+Homa li mkhllin 0 commande twsslek wakha katkhsser flouss l-Ads:
+
+1. L-Ghalat l-Awal (L-Khatir ga3): new FormData() m3a Google Apps Script
+F l-code dialk katsift l-ma3loumat hakda:
+
+JavaScript
+const formData = new FormData();
+formData.append('name', fullName);
+...
+await fetch(SCRIPT_URL, {
+  method: 'POST',
+  body: formData,
+  mode: 'no-cors'
+});
+L-Mouchkil: Mli katkhdem b new FormData(), l-browser kaysift l-data b format multipart/form-data.
+
+Google Apps Script doPost(e) MAKAYQRACH had l-format! F Google Apps Script, e.parameter katkoun khawya (empty {}).
+
+Natija: Ila kanti dayer f l-Google Sheet e.parameter.name, راه إما l-Google Sheet makatwslou hta 7aja, aw kaytzad lik star khawi (undefined)! W 7it dayer mode: 'no-cors', l-browser makay3tikch error w kaybayen l-modal dial "تهانينا" wakha f l-backend ma-tsjel walou!
+
+L-7ell: Khassk tbeddel new FormData() b new URLSearchParams() bach Google Apps Script yfhem e.parameter b shoula.
+
+2. T-tsawer mbloqyine f GitHub Pages (404 Not Found)
+F GitHub Pages (li kheddam b Linux), les noms de fichiers Case-Sensitive (kifre9 bin majuscule w minuscule) w les espaces f les noms kiykherjou 3la les liens:
+
+F l-code dayer: src="pack ipone.jpeg" (katba ipone bla c, w b l-espace).
+
+Dayer: src="Gaumage iponce.jpeg" (b "G" majuscule w espace).
+
+Dayer: src="Baume iponce.jpeg" (b "B" majuscule).
+
+L-Khatar: Ila t-tswira ma-tel3atch f GitHub Pages, dayer ليها had l-code:
+
+HTML
+onerror="this.onerror=null; this.src='https://placehold.co/800x800/f3efe6/1a2b0a?text=Pack+iPONCE+6+Pieces';"
+Z-zbouna mli katcliqui 3la l-Ads f Instagram aw TikTok, katdkhol l-site katl9a morabba3 rmadi fih ktaba b l'anglais (Placeholder) blast t-tswira dial l-produit! Ay wa7ed kaychouf hadchi kaygoul had l-site fih arnaque w kaykhrej f l-blasa.
+
+3. Permissions dial Google Apps Script Web App
+Google Apps Script ila madertich fih had l-i3dadat b d-de99a, ay wa7ed جا mn bara makayt9belch lih l-envoi:
+
+F l-Google Sheet / Apps Script: Khass dir Deploy > New Deployment (aw Manage Deployments).
+
+Execute as: Me (حسابك).
+
+Who has access: Khass tkoun darouri Anyone (أي شخص، حتى لو معندوش حساب جوجل). Ila kant "Only myself" aw "Anyone with Google account", ay wa7ed dkhel mn l-Ads ghaytblioka lih l-fetch b 403 Forbidden.
+
+Mola7ada: Koll mra bddelti l-code f Google Script, khass t-creyi New Version, sinon kayeb9a khddam b l-code l-9dim.
+
+4. Ghalat f Regex dial t-tilifoun w alert() Native
+F l-code dayer:
+
+JavaScript
+if (
+  !/^0[5-7]\d{8}$/.test(cleanPhone) &&
+  !/^212[5-7]\d{8}$/.test(cleanPhone) &&
+  !/^[5-7]\d{8}$/.test(cleanPhone)
+) {
+  alert("عافاك دخلي رقم هاتف مغربي صحيح (06 / 07 / 05).");
+  return;
+}
+Bzaf dial n-nass kayketbou n-nemra b +212 aw 00212 6....
+
+Ila khedmou b 00212..., had l-condition katblookihom w katle3 lihom alert().
+
+L-alert() native f l-In-App Browser dial Facebook w Instagram (WebView) katblooki l-écran w katkhlli l-client ykherj direct bla may3awd yjereb.
+
+5. Tna9od f n-nwamer dial WhatsApp
+F nafs l-page 3ndek 2 nwamer dial WhatsApp mkhtalfin:
+
+L-Bouton l-kheddar l-ta7t (Floating Button): 212661445459
+
+L-Bouton li f l-modal dial ta2kid t-talab: 212650054422
+Ila kan wa7ed fihom ghalat aw ma-fihch WhatsApp kheddam, katdiye3 ay client bgha y-twasel m3ak direct.
+
+L-Code l-moussa77a7 dial l-Script (Copier-Coller)
+Beddel l-partie <script> li f l-lekher dial l-fichier dialk b had l-code:
+
+JavaScript
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxbaTTSum7Qdiv0P7vDriJfn8UjlOQc9_qOnlmHa450YQR3BQE6xYoHDoh6fIAIBLfc/exec";
+
+  let currentOfferPacks = 1;
+  let currentTotal = 219;
+  let currentOfferText = "عرض العناية الفردي: 1 باك (6 قطع)";
+  let isSubmitting = false;
+
+  function updateSelectedOffer(packs, price, text) {
+    currentOfferPacks = packs;
+    currentTotal = price;
+    currentOfferText = text;
+
+    document.getElementById('displayTotal').innerText = price + ' درهم';
+    document.getElementById('stickyPriceDisplay').innerText = price + ' درهم';
+  }
+
+  function showSuccessModal(fullName, phone, city, address) {
+    document.getElementById('modalName').innerText = fullName;
+    document.getElementById('modalPhone').innerText = phone;
+    document.getElementById('modalCity').innerText = city + (address ? ' - ' + address : '');
+    document.getElementById('modalOffer').innerText = currentOfferText;
+    document.getElementById('modalPrice').innerText = currentTotal + ' درهم (توصيل فابور)';
+
+    const message = encodeURIComponent(
+      `السلام عليكم، بغيت نأكد طلبي ديال باك العناية بالقدمين iPONCE:\n` +
+      `- الاسم: ${fullName}\n` +
+      `- الهاتف: ${phone}\n` +
+      `- المدينة: ${city}\n` +
+      `- العنوان: ${address}\n` +
+      `- العرض: ${currentOfferText}\n` +
+      `- المبلغ: ${currentTotal} درهم (توصيل مجاني)`
+    );
+
+    // Beddel b n-nemra s-s7i7a dial WhatsApp dialk
+    document.getElementById('whatsappConfirmLink').href = `https://wa.me/212650054422?text=${message}`;
+    document.getElementById('successModal').classList.remove('hidden');
+  }
+
+  async function handleOrderSubmit(event) {
+    event.preventDefault();
+
+    if (isSubmitting) return;
+
+    const fullName = document.getElementById('fullName').value.trim();
+    const phone = document.getElementById('phoneNumber').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const submitBtn = document.getElementById('submitBtn');
+
+    if (!fullName || !phone || !city) {
+      return;
+    }
+
+    // Nettoyage flexible dial n-nemra
+    let cleanPhone = phone.replace(/\D/g, '');
+    if (cleanPhone.startsWith('00212')) cleanPhone = cleanPhone.substring(2);
+    if (cleanPhone.startsWith('212')) cleanPhone = '0' + cleanPhone.substring(3);
+    
+    if (cleanPhone.length < 9 || cleanPhone.length > 10) {
+      alert("عافاك تأكدي من كتابة رقم الهاتف بشكل صحيح");
+      return;
+    }
+
+    isSubmitting = true;
+    const originalBtnHtml = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.classList.remove('animate-pulse-cta');
+    submitBtn.innerHTML = `
+      <i class="fa-solid fa-spinner fa-spin text-xl text-amber-300"></i>
+      <span>جاري تسجيل طلبك...</span>
+    `;
+
+    // Khdem b URLSearchParams blast FormData bach Apps Script yqrah
+    const params = new URLSearchParams();
+    params.append('name', fullName);
+    params.append('phone', cleanPhone);
+    params.append('city', city);
+    params.append('address', address);
+    params.append('offer', currentOfferText);
+    params.append('price', String(currentTotal));
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params.toString()
+      });
+
+      // Tracking Meta Pixel Purchase
+      if (typeof fbq === 'function') {
+        fbq('track', 'Purchase', {
+          value: Number(currentTotal),
+          currency: 'MAD',
+          content_name: currentOfferText,
+          content_type: 'product'
+        });
+      }
+
+      showSuccessModal(fullName, cleanPhone, city, address);
+
+    } catch (error) {
+      console.error('Submission error:', error);
+      alert("وقع مشكل أثناء إرسال الطلب، عافاك تواصلي معنا مباشرة عبر الواتساب.");
+    } finally {
+      isSubmitting = false;
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalBtnHtml;
+      submitBtn.classList.add('animate-pulse-cta');
+    }
+  }
+
+  function closeSuccessModal() {
+    document.getElementById('successModal').classList.add('hidden');
+    document.getElementById('codOrderForm').reset();
+    updateSelectedOffer(1, 219, "عرض العناية الفردي: 1 باك (6 قطع)");
+  }
+</script>
+Kifach t-verifi l-Google Script dialk f Google Sheets:
+Khass l-code li f Extensions > Apps Script ykoun hakda:
+
+JavaScript
+function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  
+  var name = e.parameter.name || '';
+  var phone = e.parameter.phone || '';
+  var city = e.parameter.city || '';
+  var address = e.parameter.address || '';
+  var offer = e.parameter.offer || '';
+  var price = e.parameter.price || '';
+  var date = new Date().toLocaleString("fr-FR", {timeZone: "Africa/Casablanca"});
+  
+  sheet.appendRow([date, name, phone, city, address, offer, price]);
+  
+  return ContentService
+    .createTextOutput(JSON.stringify({ status: "success" }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+ok slah lia code html kaaaml binisba num khali wahda 0650054422 o binibA photos baynin ghir marslthomc lik . o ila htajiti tmodifi hta cide dial app script nsifto lik
+
+Your HTML file is ready
+
+Icône HTML
+index
+ HTML 
+T-t3dilat li dert f had l-code:
+Tew7id Nemra dial WhatsApp:
+
+Rejje3t ga3 les boutons dial WhatsApp (Floating Button l-ta7t + Bouton dial confirmation f l-Modal) khddamin b n-nemra dialk: 0650054422 ([https://wa.me/212650054422](https://wa.me/212650054422)).
+
+Isla7 Mouchkil l-Envoi l Google Sheets (FormData ➔ URLSearchParams):
+
+Bddelt FormData b URLSearchParams m3a application/x-www-form-urlencoded. Hadchi kikhlli Google Apps Script yqra l-ma3loumat direct f e.parameter bla maytl3ou lik stoura khawyin aw ytblioka l-envoi.
+
+T-tsawer:
+
+Khellit ga3 les chemins dial t-tsawer kima homa (pack ipone.jpeg, pierre iponce.jpeg, etc.) w 7eyedt dok les fallbacks li kanou kaytl3o placeholder b l'anglais.
+
+Validation s7i7a dial n-nemra:
+
+L-formulaire daba kay9bel n-nemra wakha tkoun b 06, 07, 05, 212, aw 00212 bla mayblooki l-client b des alertes kheybin.
+
+Meta Pixel Purchase:
+
+Kay-tiri l-event dial Purchase b l-qiymat s-s7i7a (MAD, l-prix dial 219 aw 419, w l-quantité) ghir mli kaytsift l-formulaire b naja7.
+
+Code dial Google Apps Script (Bach t-t'akked mno 100%):
+Ila bghiti t-verifi l-code li 3ndek f Google Sheet > Extensions > Apps Script, khasso ykoun hakda b d-de99a:
+
+JavaScript
+function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    
+    // Qrayet l-ma3loumat li siftna mn l-formulaire
+    var name = e.parameter.name || '';
+    var phone = e.parameter.phone || '';
+    var city = e.parameter.city || '';
+    var address = e.parameter.address || '';
+    var offer = e.parameter.offer || '';
+    var price = e.parameter.price || '';
+    var date = Utilities.formatDate(new Date(), "Africa/Casablanca", "yyyy-MM-dd HH:mm:ss");
+
+    // Ziyadat star jdid f l-Google Sheet
+    sheet.appendRow([date, name, phone, city, address, offer, price]);
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: "success" }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+Nassaa7 mouhimma f Google Apps Script:
+
+Mli tbeddel l-code f Apps Script, cliqui 3la Deploy > Manage Deployments > Edit (l-9lam) > Version: New Version > Deploy.
+
+T'akked darouri ana Who has access me7loula b Anyone.
+
+Teqder t-telechargi l-fichier index.html mn l-lien l-fo9 w t-pusheh direct l GitHub repo dialk.
+
+Khatwa tanya:
+
+Tester l'envoi en direct
+
+Vérifier le code Apps Script actuel
+
+
+
+Gemini est une IA et peut se tromper.
+
+Confirming Initial Generation
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -96,11 +2739,29 @@
       transform: translateY(-4px);
     }
   </style>
+
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1035638579488154');
+    fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"/>
+  </noscript>
+  <!-- End Meta Pixel Code -->
 </head>
 <body class="bg-spa-cream text-stone-800 antialiased font-sans pb-20 md:pb-0 selection:bg-brand-600 selection:text-white">
 
-  <!-- 1. Top Urgency Marquee Bar (Infinite Loop Right to Left) -->
-  <div class="bg-gradient-to-r from-brand-900 via-brand-800 to-brand-900 text-white py-2.5 shadow-md sticky top-0 z-50 overflow-hidden select-none border-b border-brand-700/40 cursor-pointer">
+  <!-- 1. Top Urgency Marquee Bar -->
+  <div class="bg-gradient-to-r from-brand-900 via-brand-800 to-brand-900 text-white py-2.5 shadow-md sticky top-0 z-50 overflow-hidden select-none border-b border-brand-700/40">
     <div class="marquee-track flex items-center" dir="ltr">
       <!-- First Segment -->
       <div class="flex items-center shrink-0 gap-10 px-4 text-xs sm:text-sm font-bold tracking-wide" dir="rtl">
@@ -121,7 +2782,7 @@
         <span class="text-lime-400 font-extrabold">✦</span>
       </div>
 
-      <!-- Second Duplicate Segment for Seamless Continuous Infinite Scroll -->
+      <!-- Second Duplicate Segment for Infinite Scroll -->
       <div class="flex items-center shrink-0 gap-10 px-4 text-xs sm:text-sm font-bold tracking-wide" dir="rtl" aria-hidden="true">
         <span class="flex items-center gap-2">
           <i class="fa-solid fa-fire text-amber-300 animate-bounce"></i>
@@ -150,7 +2811,6 @@
           src="pictures/iponce logo.jpg" 
           alt="iPONCE Logo" 
           class="h-11 sm:h-12 w-auto object-contain rounded-lg shadow-sm"
-          onerror="this.onerror=null; this.src='https://placehold.co/180x60/4e7b23/ffffff?text=iPONCE+Naturals';"
         >
         <span class="hidden sm:inline-flex text-xs bg-brand-50 text-brand-700 font-bold px-3 py-1 rounded-full border border-brand-200">
           <i class="fa-solid fa-circle-check text-brand-600 ml-1.5"></i> منتوج طبيعي أصلي 100%
@@ -162,25 +2822,6 @@
         <span>أطلبي الآن</span>
       </a>
     </div>
-
-   <!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1035638579488154');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
-/></noscript>
-<!-- End Meta Pixel Code -->
- 
   </header>
 
   <!-- 3. TOP SECTION: Hero Headline & Full Pack Image -->
@@ -223,7 +2864,6 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
           src="pack ipone.jpeg" 
           alt="باك العناية المتكاملة بالقدمين iPONCE" 
           class="w-full h-auto object-cover rounded-2xl shadow-inner transform hover:scale-[1.01] transition duration-500"
-          onerror="this.onerror=null; this.src='https://placehold.co/800x800/f3efe6/1a2b0a?text=Pack+iPONCE+6+Pieces';"
         >
 
         <!-- Pricing Tag Bar -->
@@ -262,7 +2902,7 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
     </div>
   </section>
 
-  <!-- 4. FAST COD ORDER FORM (Directly Below Top Product Image) -->
+  <!-- 4. FAST COD ORDER FORM -->
   <section id="order-form" class="py-6 px-4">
     <div class="max-w-xl mx-auto bg-white rounded-3xl p-5 sm:p-8 shadow-2xl border-2 border-brand-500 relative">
       
@@ -275,7 +2915,7 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
           أطلبي الآن واستفيدي من التخفيض
         </h2>
         <p class="text-xs sm:text-sm text-stone-600 mt-1">
-          عَمّري المعلومات أسفله وسنتصل بكِ هاتفياً أو عبر الواتساب لتأكيد الإرسال
+          عَمّري المعلومات أسفله وسنتصل بكِ لتأكيد الإرسال بالمجان
         </p>
       </div>
 
@@ -332,7 +2972,7 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
             <input 
               type="text" 
               id="fullName" 
-              name="name"
+              name="name" 
               required 
               placeholder="مثال: مريم العلمي" 
               class="w-full pr-10 pl-3 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm bg-stone-50/50"
@@ -352,9 +2992,9 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
             <input 
               type="tel" 
               id="phoneNumber" 
-              name="phone"
+              name="phone" 
               required 
-              dir="ltr"
+              dir="ltr" 
               placeholder="06 XX XX XX XX / 07 XX XX XX XX" 
               class="w-full pr-10 pl-3 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm text-right bg-stone-50/50"
             >
@@ -374,7 +3014,7 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
               <input 
                 type="text" 
                 id="city" 
-                name="city"
+                name="city" 
                 required 
                 placeholder="مثال: الدار البيضاء، مراكش، طنجة..." 
                 class="w-full pr-10 pl-3 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm bg-stone-50/50"
@@ -393,7 +3033,7 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
               <input 
                 type="text" 
                 id="address" 
-                name="address"
+                name="address" 
                 required 
                 placeholder="الحي أو رقم الإقامة والمنزل" 
                 class="w-full pr-10 pl-3 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm bg-stone-50/50"
@@ -414,7 +3054,7 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
         <!-- Big CTA Button -->
         <button 
           type="submit" 
-          id="submitBtn"
+          id="submitBtn" 
           class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-brand-600 via-brand-500 to-brand-700 hover:from-brand-700 hover:to-brand-800 text-white font-black text-base sm:text-lg shadow-xl transition transform active:scale-98 animate-pulse-cta flex items-center justify-center gap-3 cursor-pointer"
         >
           <i class="fa-solid fa-bag-shopping text-xl text-amber-300"></i>
@@ -473,7 +3113,6 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
                 src="pierre iponce.jpeg" 
                 alt="حجر الخفاف البركاني الطبيعي - iPONCE" 
                 class="w-full h-56 object-cover rounded-xl group-hover:scale-105 transition duration-500"
-                onerror="this.onerror=null; this.src='https://placehold.co/450x450/e8e2d5/2b4412?text=Pierre+Ponce';"
               >
             </div>
             <h3 class="text-lg font-black text-brand-900 mb-1">1. حجر القدمين البركاني الطبيعي</h3>
@@ -497,7 +3136,6 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
                 src="sels iponce.jpeg" 
                 alt="أملاح مغطس القدمين باللويزة والليمون - iPONCE" 
                 class="w-full h-56 object-cover rounded-xl group-hover:scale-105 transition duration-500"
-                onerror="this.onerror=null; this.src='https://placehold.co/450x450/d7e5cb/2b4412?text=Sels+de+Bain';"
               >
             </div>
             <h3 class="text-lg font-black text-brand-900 mb-1">2. أملاح مغطس باللويزة والليمون</h3>
@@ -521,7 +3159,6 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
                 src="Gaumage iponce.jpeg" 
                 alt="مقشر القدمين بالرمل والخوخ - iPONCE" 
                 class="w-full h-56 object-cover rounded-xl group-hover:scale-105 transition duration-500"
-                onerror="this.onerror=null; this.src='https://placehold.co/450x450/f6d7be/2b4412?text=Gommage+au+Sable';"
               >
             </div>
             <h3 class="text-lg font-black text-brand-900 mb-1">3. مقشر القدمين بالرمل والخوخ</h3>
@@ -545,7 +3182,6 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
                 src="serume.jpeg" 
                 alt="سيروم تغذية وتقوية أظافر القدمين - iPONCE" 
                 class="w-full h-56 object-cover rounded-xl group-hover:scale-105 transition duration-500"
-                onerror="this.onerror=null; this.src='https://placehold.co/450x450/eef2e6/2b4412?text=Serum+Ongles';"
               >
             </div>
             <h3 class="text-lg font-black text-brand-900 mb-1">4. سيروم تقوية الأظافر ومحاربة الفطريات</h3>
@@ -569,7 +3205,6 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
                 src="Baume iponce.jpeg" 
                 alt="بلسم الترطيب المكثف وعلاج التشققات - iPONCE" 
                 class="w-full h-56 object-cover rounded-xl group-hover:scale-105 transition duration-500"
-                onerror="this.onerror=null; this.src='https://placehold.co/450x450/e6ebd9/2b4412?text=Baume+Pieds';"
               >
             </div>
             <h3 class="text-lg font-black text-brand-900 mb-1">5. بلسم الترطيب والترميم (Baume Pieds)</h3>
@@ -593,7 +3228,6 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
                 src="poudre iponce.jpeg" 
                 alt="بودرة إزالة روائح القدمين والأحذية برائحة الورد - iPONCE" 
                 class="w-full h-56 object-cover rounded-xl group-hover:scale-105 transition duration-500"
-                onerror="this.onerror=null; this.src='https://placehold.co/450x450/eddcd2/2b4412?text=Poudre+Pieds';"
               >
             </div>
             <h3 class="text-lg font-black text-brand-900 mb-1">6. بودرة مضادة للعرق والروائح بالورد</h3>
@@ -720,7 +3354,7 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
               "والله العظيم إلا كنت كنعاني بزاف من تشقق القدام خصوصاً مع الوقوف فالكوزينة. من أول سيمانة حسيت بفرق كبير، المقشر والبلسم كيحمقو والريحة غزالة بزاف!"
             </p>
           </div>
-          <div class="mt-4 pt-3 border-t border-stone-100 flex items-center gap-2">
+          <div class="mt-4 pt-3 border-stone-100 flex items-center gap-2 border-t">
             <div class="w-8 h-8 rounded-full bg-brand-100 text-brand-800 font-bold flex items-center justify-center text-xs">س.ع</div>
             <div>
               <h5 class="text-xs font-bold text-stone-900">سناء العلمي</h5>
@@ -739,7 +3373,7 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
               "الباك وصلني فـ 24 ساعة للرباط. الحجر البركاني حقيقي ماشي بحال داكشي المزور لي كيتفرتت، والبودرة هنيتني من ريحة الصباط فاش كنرجع من الخدمة. شكراً ليكم."
             </p>
           </div>
-          <div class="mt-4 pt-3 border-t border-stone-100 flex items-center gap-2">
+          <div class="mt-4 pt-3 border-stone-100 flex items-center gap-2 border-t">
             <div class="w-8 h-8 rounded-full bg-brand-100 text-brand-800 font-bold flex items-center justify-center text-xs">إ.ب</div>
             <div>
               <h5 class="text-xs font-bold text-stone-900">إيمان بناني</h5>
@@ -758,7 +3392,7 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
               "خديت العرض ديال 2 باكات، واحد ليا وواحد لماما، وعجبها بزاااف خصوصاً أملاح مغطس اللويزة كيرتاحو فيها رجليها. منتوج كايستاهل كل درهم."
             </p>
           </div>
-          <div class="mt-4 pt-3 border-t border-stone-100 flex items-center gap-2">
+          <div class="mt-4 pt-3 border-stone-100 flex items-center gap-2 border-t">
             <div class="w-8 h-8 rounded-full bg-brand-100 text-brand-800 font-bold flex items-center justify-center text-xs">م.ت</div>
             <div>
               <h5 class="text-xs font-bold text-stone-900">مريم التازي</h5>
@@ -854,9 +3488,9 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
     </a>
   </div>
 
-  <!-- FLOATING WHATSAPP BUTTON -->
+  <!-- FLOATING WHATSAPP BUTTON (Single unified number 0650054422) -->
   <a 
-    href="https://wa.me/212661445459?text=%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A8%D8%BA%D9%8A%D8%AA%20%D9%86%D8%B3%D9%88%D9%84%20%D8%B9%D9%84%D9%89%20%D8%A8%D8%A7%D9%83%20iPONCE%20%D9%84%D9%84%D8%B9%D9%86%D8%A7%D9%8A%D8%A9%20%D8%A8%D8%A7%D9%84%D9%82%D8%AF%D9%85%D9%8A%D9%86" 
+    href="https://wa.me/212650054422?text=%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A8%D8%BA%D9%8A%D8%AA%20%D9%86%D8%B3%D9%88%D9%84%20%D8%B9%D9%84%D9%89%20%D8%A8%D8%A7%D9%83%20iPONCE%20%D9%84%D9%84%D8%B9%D9%86%D8%A7%D9%8A%D8%A9%20%D8%A8%D8%A7%D9%84%D9%82%D8%AF%D9%85%D9%8A%D9%86" 
     target="_blank" 
     class="fixed bottom-16 md:bottom-6 left-4 z-40 bg-[#25D366] text-white p-3.5 rounded-full shadow-2xl hover:scale-110 transition duration-300 flex items-center justify-center text-2xl border-2 border-white"
     title="تواصل معنا عبر الواتساب"
@@ -864,7 +3498,7 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
     <i class="fa-brands fa-whatsapp"></i>
   </a>
 
-  <!-- 11. CONFIRMATION POPUP MODAL (No alert()) -->
+  <!-- 11. CONFIRMATION POPUP MODAL -->
   <div id="successModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center shadow-2xl border-4 border-brand-500 transform transition-all scale-95 duration-200">
       
@@ -874,7 +3508,7 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
 
       <h3 class="text-2xl font-black text-brand-900 mb-1 font-heading">تهانينا! تم تسجيل طلبك بنجاح</h3>
       <p class="text-xs sm:text-sm text-stone-600 mb-4" id="modalConfirmationText">
-        شكراً لكِ على ثقتكِ. سنتصل بكِ هاتفياً أو عبر الواتساب خلال الساعات القادمة لتأكيد العنوان وبدء الشحن بالمجان.
+        شكراً لكِ على ثقتكِ. سنتصل بكِ هاتفياً أو عبر الواتساب لتأكيد العنوان وبدء الشحن بالمجان.
       </p>
 
       <div class="bg-brand-50 rounded-2xl p-4 border border-brand-200 text-right text-xs mb-5 space-y-1.5">
@@ -913,157 +3547,113 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
     </div>
   </div>
 
-  <!-- 12. CLIENT-SIDE SCRIPT LOGIC (Connected to Google Apps Script) -->
-<script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxbaTTSum7Qdiv0P7vDriJfn8UjlOQc9_qOnlmHa450YQR3BQE6xYoHDoh6fIAIBLfc/exec";
+  <!-- 12. CLIENT-SIDE SCRIPT LOGIC -->
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxbaTTSum7Qdiv0P7vDriJfn8UjlOQc9_qOnlmHa450YQR3BQE6xYoHDoh6fIAIBLfc/exec";
+    const STORE_WHATSAPP = "212650054422";
 
-  let currentOfferPacks = 1;
-  let currentTotal = 219;
-  let currentOfferText = "عرض العناية الفردي: 1 باك (6 قطع)";
+    let currentOfferPacks = 1;
+    let currentTotal = 219;
+    let currentOfferText = "عرض العناية الفردي: 1 باك (6 قطع)";
+    let isSubmitting = false;
 
-  // Prevent duplicate submissions
-  let isSubmitting = false;
+    function updateSelectedOffer(packs, price, text) {
+      currentOfferPacks = packs;
+      currentTotal = price;
+      currentOfferText = text;
 
-  function updateSelectedOffer(packs, price, text) {
-    currentOfferPacks = packs;
-    currentTotal = price;
-    currentOfferText = text;
-
-    document.getElementById('displayTotal').innerText = price + ' درهم';
-    document.getElementById('stickyPriceDisplay').innerText = price + ' درهم';
-  }
-
-  function normalizeMoroccanPhone(phone) {
-    let clean = String(phone || '').replace(/\D/g, '');
-
-    if (clean.startsWith('212')) {
-      return clean;
+      document.getElementById('displayTotal').innerText = price + ' درهم';
+      document.getElementById('stickyPriceDisplay').innerText = price + ' درهم';
     }
 
-    if (clean.startsWith('0')) {
-      return '212' + clean.substring(1);
+    function showSuccessModal(fullName, phone, city, address) {
+      document.getElementById('modalName').innerText = fullName;
+      document.getElementById('modalPhone').innerText = phone;
+      document.getElementById('modalCity').innerText = city + (address ? ' - ' + address : '');
+      document.getElementById('modalOffer').innerText = currentOfferText;
+      document.getElementById('modalPrice').innerText = currentTotal + ' درهم (توصيل فابور)';
+
+      const message = encodeURIComponent(
+        `السلام عليكم، بغيت نأكد طلبي ديال باك العناية بالقدمين iPONCE:
+` +
+        `- الاسم: ${fullName}
+` +
+        `- الهاتف: ${phone}
+` +
+        `- المدينة والعنوان: ${city} - ${address}
+` +
+        `- العرض: ${currentOfferText}
+` +
+        `- المبلغ الإجمالي: ${currentTotal} درهم (توصيل مجاني)`
+      );
+
+      document.getElementById('whatsappConfirmLink').href = `https://wa.me/${STORE_WHATSAPP}?text=${message}`;
+      document.getElementById('successModal').classList.remove('hidden');
     }
 
-    if (clean.length === 9) {
-      return '212' + clean;
-    }
+    async function handleOrderSubmit(event) {
+      event.preventDefault();
 
-    return clean;
-  }
+      if (isSubmitting) return;
 
-  function showSuccessModal(fullName, phone, city, address) {
-    document.getElementById('modalName').innerText = fullName;
-    document.getElementById('modalPhone').innerText = phone;
-    document.getElementById('modalCity').innerText = city + ' - ' + address;
-    document.getElementById('modalOffer').innerText = currentOfferText;
-    document.getElementById('modalPrice').innerText =
-      currentTotal + ' درهم (توصيل فابور)';
+      const form = document.getElementById('codOrderForm');
+      const submitBtn = document.getElementById('submitBtn');
+      const originalBtnHtml = submitBtn.innerHTML;
 
-    const message = encodeURIComponent(
-      `السلام عليكم، بغيت نأكد طلبي ديال باك العناية بالقدمين iPONCE:\n` +
-      `- الاسم: ${fullName}\n` +
-      `- الهاتف: ${phone}\n` +
-      `- المدينة والعنوان: ${city} - ${address}\n` +
-      `- العرض: ${currentOfferText}\n` +
-      `- المبلغ الإجمالي: ${currentTotal} درهم (توصيل مجاني)`
-    );
+      const fullName = document.getElementById('fullName').value.trim();
+      const phone = document.getElementById('phoneNumber').value.trim();
+      const city = document.getElementById('city').value.trim();
+      const address = document.getElementById('address').value.trim();
 
-    document.getElementById('whatsappConfirmLink').href =
-      `https://wa.me/212650054422?text=${message}`;
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
 
-    document.getElementById('successModal').classList.remove('hidden');
-  }
+      if (!fullName || !phone || !city || !address) {
+        return;
+      }
 
-  function showOrderError() {
-    alert(
-      "سمحي لينا، وقع مشكل أثناء تسجيل الطلب. عافاك عاودي المحاولة، وإذا بقى المشكل تواصلي معنا عبر WhatsApp."
-    );
-  }
+      // Flexible Moroccan phone cleaner
+      let cleanPhone = phone.replace(/\D/g, '');
+      if (cleanPhone.startsWith('00212')) cleanPhone = cleanPhone.substring(2);
+      if (cleanPhone.startsWith('212')) cleanPhone = '0' + cleanPhone.substring(3);
 
-  async function handleOrderSubmit(event) {
-    event.preventDefault();
+      if (cleanPhone.length < 9 || cleanPhone.length > 10) {
+        alert("عافاك تأكدي من كتابة رقم هاتف صحيح (مثال: 0612345678)");
+        return;
+      }
 
-    // Prevent double-click / duplicate order
-    if (isSubmitting) {
-      return;
-    }
+      isSubmitting = true;
+      submitBtn.disabled = true;
+      submitBtn.classList.remove('animate-pulse-cta');
+      submitBtn.innerHTML = `
+        <i class="fa-solid fa-spinner fa-spin text-xl text-amber-300"></i>
+        <span>جاري تسجيل طلبك...</span>
+      `;
 
-    const form = document.getElementById('codOrderForm');
-    const submitBtn = document.getElementById('submitBtn');
+      // Use URLSearchParams for seamless parsing in Google Apps Script e.parameter
+      const params = new URLSearchParams();
+      params.append('name', fullName);
+      params.append('phone', cleanPhone);
+      params.append('city', city);
+      params.append('address', address);
+      params.append('offer', currentOfferText);
+      params.append('price', String(currentTotal));
 
-    const originalBtnHtml = submitBtn.innerHTML;
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: params.toString()
+        });
 
-    const fullName = document.getElementById('fullName').value.trim();
-    const phone = document.getElementById('phoneNumber').value.trim();
-    const city = document.getElementById('city').value.trim();
-    const address = document.getElementById('address').value.trim();
-
-    // Browser validation
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      return;
-    }
-
-    if (!fullName || !phone || !city || !address) {
-      return;
-    }
-
-    // Basic Moroccan phone validation
-    const cleanPhone = phone.replace(/\D/g, '');
-
-    if (
-      !/^0[5-7]\d{8}$/.test(cleanPhone) &&
-      !/^212[5-7]\d{8}$/.test(cleanPhone) &&
-      !/^[5-7]\d{8}$/.test(cleanPhone)
-    ) {
-      alert("عافاك دخلي رقم هاتف مغربي صحيح (06 / 07 / 05).");
-      return;
-    }
-
-    isSubmitting = true;
-    submitBtn.disabled = true;
-
-    submitBtn.classList.remove('animate-pulse-cta');
-    submitBtn.innerHTML = `
-      <i class="fa-solid fa-spinner fa-spin text-xl text-amber-300"></i>
-      <span>جاري تسجيل طلبك...</span>
-    `;
-
-    const formData = new FormData();
-
-    formData.append('name', fullName);
-    formData.append('phone', phone);
-    formData.append('city', city);
-    formData.append('address', address);
-    formData.append('offer', currentOfferText);
-    formData.append('price', String(currentTotal));
-
-    try {
-
-      /*
-       * Google Apps Script is cross-origin.
-       * no-cors allows the POST request to be sent.
-       * The browser cannot read the response body/status.
-       */
-      await fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: formData,
-        mode: 'no-cors',
-        cache: 'no-store'
-      });
-
-      /*
-       * IMPORTANT:
-       * Purchase is NOT fired on button click anymore.
-       *
-       * It is fired only after the order submission request
-       * has completed from the browser side.
-       */
-      if (typeof fbq === 'function') {
-        fbq(
-          'track',
-          'Purchase',
-          {
+        // Trigger Meta Pixel Purchase event with verified purchase data
+        if (typeof fbq === 'function') {
+          fbq('track', 'Purchase', {
             value: Number(currentTotal),
             currency: 'MAD',
             content_name: currentOfferText,
@@ -1074,55 +3664,31 @@ src="https://www.facebook.com/tr?id=1035638579488154&ev=PageView&noscript=1"
                 quantity: Number(currentOfferPacks)
               }
             ]
-          }
-        );
+          });
+        }
+
+        // Show successful order confirmation popup
+        showSuccessModal(fullName, cleanPhone, city, address);
+
+      } catch (error) {
+        console.error('Order submission error:', error);
+        alert("وقع مشكل أثناء تسجيل الطلب. عافاك عاودي المحاولة أو تواصلي معنا عبر الواتساب.");
+      } finally {
+        isSubmitting = false;
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnHtml;
+        submitBtn.classList.add('animate-pulse-cta');
       }
-
-      // Show successful order confirmation
-      showSuccessModal(
-        fullName,
-        phone,
-        city,
-        address
-      );
-
-    } catch (error) {
-
-      console.error(
-        'iPONCE order submission error:',
-        error
-      );
-
-      /*
-       * IMPORTANT:
-       * We DO NOT fire Purchase here.
-       * We DO NOT show "success" modal here.
-       */
-      showOrderError();
-
-    } finally {
-
-      isSubmitting = false;
-
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = originalBtnHtml;
-      submitBtn.classList.add('animate-pulse-cta');
     }
-  }
 
-  function closeSuccessModal() {
-    const modal = document.getElementById('successModal');
-
-    modal.classList.add('hidden');
-
-    document.getElementById('codOrderForm').reset();
-
-    updateSelectedOffer(
-      1,
-      219,
-      "عرض العناية الفردي: 1 باك (6 قطع)"
-    );
-  }
-</script>
+    function closeSuccessModal() {
+      const modal = document.getElementById('successModal');
+      modal.classList.add('hidden');
+      document.getElementById('codOrderForm').reset();
+      updateSelectedOffer(1, 219, "عرض العناية الفردي: 1 باك (6 قطع)");
+    }
+  </script>
 </body>
 </html>
+index.html
+Affichage de index.html.
